@@ -6,3 +6,8 @@
 meteor-platform
 autopublish
 insecure
+iron:router
+coffeescript
+less
+mrt:font-awesome-4-less
+

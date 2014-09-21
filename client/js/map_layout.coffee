@@ -86,18 +86,6 @@ mapClick = ->
     google.maps.event.addListener mapClickInfoWindow, "domready", ->
       imageId = null
       $( "div.location" ).html("<h1>#{formatedAddress}</h1>")
-
-      if (Meteor.isClient)
-        Dropzone.autoDiscover = true
-        new Dropzone "#content form#location-images.dropzone",
-          accept: (file, done) ->
-            Images.insert file, (err, fileObj) ->
-              if err
-                alert "Error exists: ", err
-              else
-                imageId = fileObj._id
-            done()
-
       $("#saveMarker").click ->
         description = $("#content #description").val()
         Markers.insert(markerObject(latData, lngData, description, imageId, formatedAddress))

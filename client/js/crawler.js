@@ -21,3 +21,11 @@
 //     // code to run on server at startup
 //   });
 // }
+if (Meteor.isClient) {
+  Template.dataTable.markers = function () {
+    return markers.find();
+  };
+  Template.dataTable.count = function () {
+    return markers.find().count();
+  };
+}

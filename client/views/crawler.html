@@ -3,6 +3,8 @@
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCoXPNILPDUYhoJxvLw-mp0EA5RC2qoqTQ"></script>
   <script type="text/javascript" src="//api.filepicker.io/v1/filepicker.js"></script>
+  <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
+  <script src="//cdn.datatables.net/plug-ins/be7019ee387/api/fnFindCellRowIndexes.js"></script>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
   <meta charset="utf-8">
 </head>
@@ -35,6 +37,7 @@
 
   {{> infoWindow}}
 <!--   {{> infoWindowShow}} -->
+  {{> dataTable}}
 </template>
 
 
@@ -69,3 +72,30 @@
   </div>
   <button class="btn" id="saveMarker">Save Pin</button>
 </template>
+
+<template name="dataTable">
+  <h2>Crawled Shops ({{count}})</h2>
+    <div id="markers">
+         {{#each markers}}
+            <a href="#" target="_blank">
+            {{#if imageUrl}}
+              <img src="https://media.licdn.com/media{{imageUrl}}" />
+            {{else}}
+              <img src="https://static.licdn.com/scds/common/u/images/themes/katy/ghosts/person/ghost_person_60x60_v1.png" />
+            {{/if}}
+              {{marker.lat}}, {{marker.lng}}
+              {{#if marker.description}}
+                <span class="fmt_headline">({{marker.description}})</span>
+              {{/if}}
+              {{#if fmt_industry}}
+                <span class="fmt_industry">({{fmt_industry}})</span>
+              {{/if}}
+              {{#if fmt_location}}
+                <span class="fmt_location">({{fmt_location}})</span>
+              {{/if}}
+            </a>
+          {{/each}}
+    </div>
+</template>
+
+

@@ -20,8 +20,14 @@ clean = (txt) ->
 
 
 $ = HTTP.get "http://www.yelp.com/search?find_desc=&find_loc=New+York+City%2C+NY%2C+USA&ns=1&ls=cf0b18d10d416e2c#cflt=shopping&l=g:-74.0052205324173,40.71461387762443,-74.00858938694,40.71258081801618"
-# console.log $
+# console.log $.content
 b = JSON.stringify($);
+# console.log b
+numberOfPages = b.indexOf("prev-next");
+data = b.substring(numberOfPages - 109, numberOfPages)
+console.log data
+numbOf = data.charAt(0)
+console.log numbOf
 n = b.indexOf("]}}}");
 m = b.indexOf("latitude")
 res = b.substring(m, n + 4);
@@ -30,7 +36,7 @@ better = res.substring(o + 13);
 clean('{' + better + '}')
 scrap = EJSON.parse(cleanS)
 a = scrap.markers
-console.log a
+# console.log a
 console.log typeof a
 console.log length = (Object.keys(a).length)
 # console.log latData = a[1].location.latitude

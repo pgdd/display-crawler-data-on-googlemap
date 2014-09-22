@@ -116,12 +116,12 @@ autoLoadSavedMarkers = ->
           draggable: false,
 
         google.maps.event.addListener savedMarker, "click", (event) ->
-          markerId = Session.get(event.latLng.toString())
-          marker = Markers.findOne({_id: markerId})
-          if marker.imageId
-            imgUrl = Images.findOne({_id: marker.imageId}).url()
-            imageTag = "<img src='#{imgUrl}' />"
-          contentString = "<div id=\"content\">" + "<h1> #{marker.address} </h1><div>#{marker.description}</div>" + imageTag + "</div>"
+          # markerId = Session.get(event.latLng.toString())
+          # marker = Markers.findOne({_id: markerId})
+          # if marker.imageId
+          #   imgUrl = Images.findOne({_id: marker.imageId}).url()
+          #   imageTag = "<img src='#{imgUrl}' />"
+          contentString = "<div id=\"content\">" + "<div>#{object.description}</div>" + "</div>"
           savedInfoWindow = new google.maps.InfoWindow(content: contentString)
           infoWindowContent(savedInfoWindow, contentString)
 

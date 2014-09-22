@@ -32,7 +32,6 @@ scrap = EJSON.parse(cleanS)
 a = scrap.markers
 console.log a
 console.log typeof a
-console.log a.length
 console.log length = (Object.keys(a).length)
 # console.log latData = a[1].location.latitude
 for i in [1...length]
@@ -40,7 +39,6 @@ for i in [1...length]
   lngData = a[i].location.longitude
   description = a[i].url
   Markers.insert(markerObject(latData, lngData, description))
-  return
-console.log('end')
+  console.log('end')
 
 

@@ -40,6 +40,7 @@ o = res.indexOf("zoom");
 console.log better = res.substring(o + 13);
 clean('{' + better + '}')
 scrap = EJSON.parse(cleanS)
+console.log scrap
 a = scrap.markers
 # console.log a
 # console.log typeof a
@@ -55,8 +56,78 @@ for i in [1...length]
   latData = a[i].location.latitude
   lngData = a[i].location.longitude
   description = a[i].url
-  Markers.insert(markerObject(latData, lngData, description))
+  # Markers.insert(markerObject(latData, lngData, description))
   console.log description + " " + latData + " " + lngData
   console.log('end')
+
+
+# test define center of a c
+lat1 = 40.76679992935825
+lon1 = -73.96784278317864
+lat2 = 40.76883133248217
+lon2 = -73.96447392865593
+console.log lon2 - lon1
+console.log lat2 - lat1
+lat3 = undefined
+lon3 = undefined
+dLon = undefined
+dLat = undefined
+dLon = undefined
+R = undefined
+a = undefined
+c = undefined
+d = undefined
+brng = undefined
+Bx = undefined
+By = undefined
+
+
+toRad = (Value) ->
+  Value * Math.PI / 180
+
+bearing = () ->
+  y = Math.sin(dLon) * Math.cos(lat2)
+  x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon)
+  brng = toRad(Math.atan2(y, x))
+  console.log "brng" + brng
+calculateDistance = () ->
+  R = 6371
+  dLat = toRad(lat2 - lat1)
+  dLon = toRad(lon2 - lon1)
+  a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
+  c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  d = (R * c) * 1000
+  console.log lat3 = lat1 + (lat2 - lat1)/2
+  console.log lon3 = lon2 + (lon1 - lon2)/2
+  aaa = "this is middle"
+  bbb = "secondttt"
+  fff = "firstt"
+  Markers.insert(markerObject(lat1, lon1, fff))
+  Markers.insert(markerObject(lat2, lon2, bbb))
+  Markers.insert(markerObject(lat3, lon3, aaa))
+
+  # bearing()
+  # console.log "this is distance " + d
+  # console.log  'this is lat' + lat3 = Math.asin(Math.sin(lat1) * Math.cos(d / R) + Math.cos(lat1) * Math.sin(d / R) * Math.cos(brng))
+  # console.log lon3 = lon1 + Math.atan2(Math.sin(brng) * Math.sin(d / R) * Math.cos(lat1), Math.cos(d / R) - Math.sin(lat1) * Math.sin(lat2))
+
+
+
+# latOfCenterOfDiag = (lat1, lon1, brng) ->
+
+
+  # lat3 = Math.asin(Math.sin(lat1) * Math.cos(d / R) + Math.cos(lat1) * Math.sin(d / R) * Math.cos(brng))
+  # lon3 = lon1 + Math.atan2(Math.sin(brng) * Math.sin(d / R) * Math.cos(lat1), Math.cos(d / R) - Math.sin(lat1) * Math.sin(lat2))
+  # Bx = Math.cos(lat2) * Math.cos(dLon)
+  # By = Math.cos(lat2) * Math.sin(dLon)
+  # lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By))
+  # lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx)
+  # console.log lat3
+  # console.log lon3
+
+
+calculateDistance()
+
+# # latOfCenterOfDiag(lat1, lon1, brng)
 
 

@@ -98,6 +98,7 @@ autoLoadSavedMarkers = ->
     Deps.autorun () ->
       array = Markers.find().fetch()
       for key, object of array
+        console.log key
         latt = object.lat
         long = object.lng
         description = object.description
@@ -116,12 +117,12 @@ autoLoadSavedMarkers = ->
           draggable: false,
 
         google.maps.event.addListener savedMarker, "click", (event) ->
-          # markerId = Session.get(event.latLng.toString())
-          # marker = Markers.findOne({_id: markerId})
+          markerId = Session.get(event.latLng.toString())
+          marker = Markers.findOne({_id: markerId})
           # if marker.imageId
           #   imgUrl = Images.findOne({_id: marker.imageId}).url()
           #   imageTag = "<img src='#{imgUrl}' />"
-          contentString = "<div id=\"content\">" + "<div>#{object.description}</div>" + "</div>"
+          contentString = "<div id=\"content\">" + "<div>#{marker.description}</div>" + "</div>"
           savedInfoWindow = new google.maps.InfoWindow(content: contentString)
           infoWindowContent(savedInfoWindow, contentString)
 

@@ -7,8 +7,8 @@ scrap = [{}]
 markers = [{}]
 location = [{}]
 url = [{}]
-markerObject = (latData, lngData, description, imageId, formatedAddress) ->
-  {lat: latData, lng: lngData, description: description, imageId: imageId, address: formatedAddress}
+markerObject = (latData, lngData, name, tel, factual_id, region, postcode, fax) ->
+  {lat: latData, lng: lngData, name: name, tel: tel, factual_id: factual_id, region: region, postcode: postcode, fax: fax}
 
 clean = (txt) ->
   chr = ['\\']
@@ -133,8 +133,20 @@ findMiddle = () ->
         lon3
       ]
       $meters: d
-  , (error, res) ->
-    console.log res.data
+  , Meteor.bindEnvironment (error, res) ->
+    # console.log res.data[0]
+    console.log country = res.data[0].country
+    console.log latFactual = res.data[0].latitude
+    console.log lonFactual = res.data[0].longitude
+    console.log name = res.data[0].name
+    console.log tel = res.data[0].tel
+    console.log factual_id = res.data[0].factual_id
+    console.log region = res.data[0].region
+    console.log postcode = res.data[0].postcode
+    console.log fax = res.data[0].fax
+    Markers.insert(markerObject(latFactual, lonFactual, name, tel, factual_id, region, postcode, fax))
+
+
     return
 
 

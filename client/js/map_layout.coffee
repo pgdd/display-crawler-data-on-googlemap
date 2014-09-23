@@ -16,6 +16,20 @@ address = undefined
 poly = undefined
 geolocationInfoWindow = undefined
 currentPosMarker = undefined
+cleanS = undefined
+scrap = [{}]
+markers = [{}]
+location = [{}]
+url = [{}]
+country = undefined
+latFactual = undefined
+lonFactual = undefined
+name = undefined
+tel = undefined
+factual_id = undefined
+region = undefined
+postcode = undefined
+fax = undefined
 
 Template.map.rendered = ->
   google.maps.event.addDomListener(window, 'load', initializeMap);
@@ -122,7 +136,7 @@ autoLoadSavedMarkers = ->
           # if marker.imageId
           #   imgUrl = Images.findOne({_id: marker.imageId}).url()
           #   imageTag = "<img src='#{imgUrl}' />"
-          contentString = "<div id=\"content\">" + "<div>#{marker.description}</div>" + "</div>"
+          contentString = "<div id=\"content\">" + "<div>Name : #{marker.name}</div>"+ "<div>Tel : #{marker.telephone}</div>" + "<div>#{marker.url}</div>" + "<div>#{marker.fax}</div>" + "<div>#{marker.factual_id}</div> + </div>"
           savedInfoWindow = new google.maps.InfoWindow(content: contentString)
           infoWindowContent(savedInfoWindow, contentString)
 

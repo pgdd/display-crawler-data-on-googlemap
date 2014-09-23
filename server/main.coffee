@@ -7,8 +7,17 @@ scrap = [{}]
 markers = [{}]
 location = [{}]
 url = [{}]
-markerObject = (latData, lngData, name, tel, factual_id, region, postcode, fax) ->
-  {lat: latData, lng: lngData, name: name, tel: tel, factual_id: factual_id, region: region, postcode: postcode, fax: fax}
+country = undefined
+latFactual = undefined
+lonFactual = undefined
+name = undefined
+tel = undefined
+factual_id = undefined
+region = undefined
+postcode = undefined
+fax = undefined
+markerObject = (latData, lngData, name, tel, factual_id, region, postcode, fax, url, yelp) ->
+  {lat: latData, lng: lngData, name: name, tel: tel, factual_id: factual_id, region: region, postcode: postcode, fax: fax, url: url, yelp: yelp}
 
 clean = (txt) ->
   chr = ['\\']
@@ -55,9 +64,10 @@ console.log numberOfPagesAvailable = parseInt(thatString)
 for i in [1...length]
   latData = a[i].location.latitude
   lngData = a[i].location.longitude
-  description = a[i].url
-  Markers.insert(markerObject(latData, lngData, description))
-  console.log description + " " + latData + " " + lngData
+  urli = a[i].url
+  yelp = true
+  Markers.insert(markerObject(latData, lngData, name, tel, factual_id, region, postcode, fax, urli, yelp))
+  console.log url + " " + latData + " " + lngData
   console.log('end')
 
 
@@ -107,7 +117,8 @@ findMiddle = () ->
   # fff = "firstt"
   # Markers.insert(markerObject(lat1, lon1, fff))
   # Markers.insert(markerObject(lat2, lon2, bbb))
-  Markers.insert(markerObject(lat3, lon3, aaa))
+  # yelp = false
+  # Markers.insert(markerObject(lat3, lon3, name, tel, factual_id, region, postcode, fax, aaa, yelp))
 
   # get data from Factual
   keyFactual = 'Y1irlCd3KfTm113yFd3GVlDzkGvtbzU5nqNteLqZ'
@@ -146,8 +157,21 @@ findMiddle = () ->
       console.log region = res.data[i].region
       console.log postcode = res.data[i].postcode
       console.log fax = res.data[i].fax
-      Markers.insert(markerObject(latFactual, lonFactual, name, tel, factual_id, region, postcode, fax))
+      yelp = false
+      url = undefined
+      Markers.insert(markerObject(latFactual, lonFactual, name, tel, factual_id, region, postcode, fax, url, yelp))
+      # marker = Markers.findOne({lat: latFactual})
+      # console.log 'here is marker' + marker._id
+      # array = Markers.find().fetch()
+      # for key, object of array
+      #   console.log key
 
+
+
+# linkData = () ->
+#   marker = Markers.findOne({_id: markerId})
+#   array = Markers.find().fetch()
+#       for key, object of array
 
 
 

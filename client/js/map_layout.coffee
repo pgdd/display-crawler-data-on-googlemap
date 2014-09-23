@@ -110,7 +110,7 @@ markerObject = (latData, lngData, description, imageId, formatedAddress) ->
 autoLoadSavedMarkers = ->
   if (Meteor.isClient)
     Deps.autorun () ->
-      array = Markers.find().fetch()
+      array = Markers.find(yelp: true).fetch()
       for key, object of array
         console.log key
         latt = object.lat

@@ -161,7 +161,7 @@ findMiddle = () ->
       if marker is undefined
         console.log 'not this one'
       else
-        console.log 'here is marker' + marker._id
+        console.log 'here is marker' + marker._id + latData + lngData + name + tel + factual_id + region + postcode + fax + url + yelp
         yelp = true
         Markers.update
           _id: marker._id

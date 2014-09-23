@@ -21,7 +21,7 @@ clean = (txt) ->
 # url1 = "http://www.yelp.com/search?find_desc=shopping&ns=1#find_loc=Paris"
 # url1 = "http://www.yelp.com/search?find_desc=shopping&ns=1#find_loc=New+York,+NY+10159&l=g:-73.99020552635193,40.74052953220297,-73.99188995361328,40.73951340594177"
 # ur = http://www.yelp.com/search?find_desc=shopping&ns=1#find_loc=New+York,+NY+10159&l=g:-73.99020552635193,40.74052953220297,-73.99188995361328,40.73951340594177
-$ = HTTP.get "http://www.yelp.com/search?find_desc=&find_loc=shopping&l=g:-73.96447392865593,40.76883133248217,-73.96784278317864,40.76679992935825"
+$ = Meteor.http.get "http://www.yelp.com/search?find_desc=&find_loc=shopping&l=g:-73.96447392865593,40.76883133248217,-73.96784278317864,40.76679992935825"
 # $ = HTTP.get "http://www.yelp.com/search?find_desc=&find_loc=New+York+City%2C+NY%2C+USA&ns=22&ls=cf0b18d10d416e2c#cflt=shopping&l=g:-74.0052205324173,40.71461387762443,-74.00858938694,40.71258081801618"
 # $ = HTTP.get "http://www.yelp.com/search?find_desc=&find_loc=New+York+City%2C+NY%2C+USA&ns=1&ls=cf0b18d10d416e2c#cflt=shopping&l=g:-74.0052205324173,40.71461387762443,-74.00858938694,40.71258081801618"
 # $ = HTTP.get "http://www.yelp.com/search?find_desc=&find_loc=New+York+City%2C+NY%2C+USA&ns=1#cflt=shopping&l=g:-73.98993194103241,40.72597751524788,-73.99161636829376,40.72496116672323"
@@ -56,7 +56,7 @@ for i in [1...length]
   latData = a[i].location.latitude
   lngData = a[i].location.longitude
   description = a[i].url
-  # Markers.insert(markerObject(latData, lngData, description))
+  Markers.insert(markerObject(latData, lngData, description))
   console.log description + " " + latData + " " + lngData
   console.log('end')
 
@@ -90,44 +90,56 @@ bearing = () ->
   x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon)
   brng = toRad(Math.atan2(y, x))
   console.log "brng" + brng
-calculateDistance = () ->
+findMiddle = () ->
+  # calcul distance
   R = 6371
   dLat = toRad(lat2 - lat1)
   dLon = toRad(lon2 - lon1)
   a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
   c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
   d = (R * c) * 1000
+  console.log 'this is distance in meter' + ' ' + d
+  #Create point between the two points to define the center of circle inside
   console.log lat3 = lat1 + (lat2 - lat1)/2
   console.log lon3 = lon2 + (lon1 - lon2)/2
   aaa = "this is middle"
-  bbb = "secondttt"
-  fff = "firstt"
-  Markers.insert(markerObject(lat1, lon1, fff))
-  Markers.insert(markerObject(lat2, lon2, bbb))
+  # bbb = "secondttt"
+  # fff = "firstt"
+  # Markers.insert(markerObject(lat1, lon1, fff))
+  # Markers.insert(markerObject(lat2, lon2, bbb))
   Markers.insert(markerObject(lat3, lon3, aaa))
 
-  # bearing()
-  # console.log "this is distance " + d
-  # console.log  'this is lat' + lat3 = Math.asin(Math.sin(lat1) * Math.cos(d / R) + Math.cos(lat1) * Math.sin(d / R) * Math.cos(brng))
-  # console.log lon3 = lon1 + Math.atan2(Math.sin(brng) * Math.sin(d / R) * Math.cos(lat1), Math.cos(d / R) - Math.sin(lat1) * Math.sin(lat2))
+  # get data from Factual
+  keyFactual = 'Y1irlCd3KfTm113yFd3GVlDzkGvtbzU5nqNteLqZ'
+  filterInJson = '{"$circle":{"$center":[#{lat3},#{lon3}],"$meters":#{d}}}'
+  objectFilter = EJSON.stringify(filterInJson)
+  newtest = EJSON.parse objectFilter
+  console.log newtest
+  urlFac = "http://api.v3.factual.com/t/restaurants-us?geo=" + newtest + "&KEY=#{keyFactual}"
+  console.log urlFac
+  # A = Meteor.http.get(urlFac)
+  # console.log A
+  Factual = undefined
+  factual = undefined
+  Factual = Meteor.npmRequire("factual-api")
+  factual = new Factual("Y1irlCd3KfTm113yFd3GVlDzkGvtbzU5nqNteLqZ", "nAYWpc1AZx6TwdsmwwpxT526Oq6YqSMjiE4ERKuV")
+
+  factual.get "/t/places-us",
+  q: "coffee"
+  geo:
+    $circle:
+      $center: [
+        lat3
+        lon3
+      ]
+      $meters: d
+  , (error, res) ->
+    console.log res.data
+    return
 
 
 
-# latOfCenterOfDiag = (lat1, lon1, brng) ->
 
-
-  # lat3 = Math.asin(Math.sin(lat1) * Math.cos(d / R) + Math.cos(lat1) * Math.sin(d / R) * Math.cos(brng))
-  # lon3 = lon1 + Math.atan2(Math.sin(brng) * Math.sin(d / R) * Math.cos(lat1), Math.cos(d / R) - Math.sin(lat1) * Math.sin(lat2))
-  # Bx = Math.cos(lat2) * Math.cos(dLon)
-  # By = Math.cos(lat2) * Math.sin(dLon)
-  # lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By))
-  # lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx)
-  # console.log lat3
-  # console.log lon3
-
-
-calculateDistance()
-
-# # latOfCenterOfDiag(lat1, lon1, brng)
+findMiddle()
 
 

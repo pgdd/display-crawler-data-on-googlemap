@@ -90,7 +90,7 @@ d = undefined
 brng = undefined
 Bx = undefined
 By = undefined
-
+marker = undefined
 
 toRad = (Value) ->
   Value * Math.PI / 180
@@ -122,7 +122,7 @@ findMiddle = () ->
 
   # get data from Factual
   keyFactual = 'Y1irlCd3KfTm113yFd3GVlDzkGvtbzU5nqNteLqZ'
-  filterInJson = '{"$circle":{"$center":[#{lat3},#{lon3}],"$meters":#{d}}}'
+  filterInJson = '{"$circle":{"$center":[#{lat3},#{lon3}],"$meters":#{d}}}' + '?filters={category_ids:{"$includes":123}}'
   objectFilter = EJSON.stringify(filterInJson)
   newtest = EJSON.parse objectFilter
   console.log newtest
@@ -136,18 +136,15 @@ findMiddle = () ->
   factual = new Factual("Y1irlCd3KfTm113yFd3GVlDzkGvtbzU5nqNteLqZ", "nAYWpc1AZx6TwdsmwwpxT526Oq6YqSMjiE4ERKuV")
 
   factual.get "/t/places-us",
-  q: "coffee"
-  geo:
-    $circle:
-      $center: [
-        lat3
-        lon3
-      ]
-      $meters: d
+    filters:
+      category_ids:
+        $includes: 347
   , Meteor.bindEnvironment (error, res) ->
+    console.log res.data
     lengthOfJson = res.data.length
     limit = lengthOfJson - 1
     for i in [0...limit]
+      # console.log res.data
       console.log country = res.data[i].country
       console.log latFactual = res.data[i].latitude
       console.log lonFactual = res.data[i].longitude
@@ -160,20 +157,35 @@ findMiddle = () ->
       yelp = false
       url = undefined
       Markers.insert(markerObject(latFactual, lonFactual, name, tel, factual_id, region, postcode, fax, url, yelp))
-      # marker = Markers.findOne({lat: latFactual})
-      # console.log 'here is marker' + marker._id
-      # array = Markers.find().fetch()
-      # for key, object of array
-      #   console.log key
+      marker = Markers.findOne({lat: latFactual, lng: lonFactual, yelp: true})
+      if marker is undefined
+        console.log 'not this one'
+      else
+        console.log 'here is marker' + marker._id
+        yelp = true
+        Markers.update
+          _id: marker._id
+        ,
+          lat: latData
+          lng: lngData
+          name: name
+          tel: tel
+          factual_id: factual_id
+          region: region
+          postcode: postcode
+          fax: fax
+          url: url
+          yelp: yelp
 
+        # Users.update
+        #   _id: "123"
+        # ,
+        #   name: "Alice"
+        #   friends: ["Bob"]
 
+        # Users.update {_id: marker._id}, {lat: latData, lng: lngData, name: name, tel: tel, factual_id: factual_id, region: region, postcode: postcode, fax: fax, url: url, yelp: yelp}})
 
-# linkData = () ->
-#   marker = Markers.findOne({_id: markerId})
-#   array = Markers.find().fetch()
-#       for key, object of array
-
-
+        # Mongo.Collection#update (marker, yelp: true}), {$set: {lat: latData, lng: lngData, name: name, tel: tel, factual_id: factual_id, region: region, postcode: postcode, fax: fax, url: url, yelp: yelp}})
 
 
 findMiddle()

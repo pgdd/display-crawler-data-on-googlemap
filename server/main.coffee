@@ -134,20 +134,20 @@ findMiddle = () ->
       ]
       $meters: d
   , Meteor.bindEnvironment (error, res) ->
-    # console.log res.data[0]
-    console.log country = res.data[0].country
-    console.log latFactual = res.data[0].latitude
-    console.log lonFactual = res.data[0].longitude
-    console.log name = res.data[0].name
-    console.log tel = res.data[0].tel
-    console.log factual_id = res.data[0].factual_id
-    console.log region = res.data[0].region
-    console.log postcode = res.data[0].postcode
-    console.log fax = res.data[0].fax
-    Markers.insert(markerObject(latFactual, lonFactual, name, tel, factual_id, region, postcode, fax))
+    lengthOfJson = res.data.length
+    limit = lengthOfJson - 1
+    for i in [0...limit]
+      console.log country = res.data[i].country
+      console.log latFactual = res.data[i].latitude
+      console.log lonFactual = res.data[i].longitude
+      console.log name = res.data[i].name
+      console.log tel = res.data[i].tel
+      console.log factual_id = res.data[i].factual_id
+      console.log region = res.data[i].region
+      console.log postcode = res.data[i].postcode
+      console.log fax = res.data[i].fax
+      Markers.insert(markerObject(latFactual, lonFactual, name, tel, factual_id, region, postcode, fax))
 
-
-    return
 
 
 

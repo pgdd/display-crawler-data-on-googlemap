@@ -1,0 +1,36 @@
+<template name="dataTable">
+  <div class="markers">
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Current Charge</th>
+        <th>Email</th>
+      </tr>
+        {{#each markers}}
+          <tr>
+            <td>
+                {{name}}
+            </td>
+            <td>{{lat}}</td>
+            <td>{{lng}}</td>
+            <td>{{url}}</td>
+            <td>{{_id}}</td>
+            <td>{{tel}}</td>
+          </tr>
+          {{/each}}
+    </table>
+  </div>
+</template>
+
+
+
+
+
+
+<template name="markerItem">
+  <div class="marker">
+    <div class="marker-content">
+      <h3><a href="{{url}}">{{title}}</a><span>{{url}}</span></h3>
+    </div>
+  </div>
+</template>

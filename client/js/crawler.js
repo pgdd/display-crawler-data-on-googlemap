@@ -22,10 +22,7 @@
 //   });
 // }
 // if (Meteor.isClient) {
-//   Template.dataTable.markers = function () {
-//     return markers.find();
-//   };
-//   Template.dataTable.count = function () {
-//     return markers.find().count();
+//   Template.dataTable.Markers = function () {
+//     return Markers.find();
 //   };
 // }

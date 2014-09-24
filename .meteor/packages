@@ -16,4 +16,5 @@ npm-container
 http
 simison:bootstrap3-less
 meteorhacks:npm
+mrt:datatables
 

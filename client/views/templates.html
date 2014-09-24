@@ -1,0 +1,56 @@
+<template name="editMarker">
+  <div>
+    <div class="edit-marker">
+      <!-- <button class="btn" id="saveMarker">Save Pin</button> -->
+    </div>
+  </div>
+</template>
+
+<template name="map">
+<!--   {{> navbar }} -->
+  <div id="map-canvas">
+  </div>
+  <div id="panel">
+    <h2>Find a Location</h2>
+    <input class="input-field" id="address" type="textbox" autofocus>
+    <button type="button" class="btn" id="address">Find</button>
+  {{> editMarker}}
+  <hr>
+    <div id="markerKey">
+      <ul>
+        <h3>Marker Key:</h3>
+        <li><img src="/images/yellowMarker.png"> Your current position</li>
+        <li><img src="/images/greenMarker-01.png"> Saved locations </li>
+        <li><img src="/images/blueMarker-01.png">  New selection</li>
+      </ul>
+    </div>
+  </div>
+
+  {{> infoWindow}}
+<!--   {{> infoWindowShow}} -->
+ <!--  {{> dataTable}} -->
+</template>
+
+<template name="infoWindow">
+  <div id="content_source" style="display: none;">
+    <div class="location"><h1>Location</h1></div>
+      <div class="form-group">
+        <div class="description">Description:</div>
+        <input type="textarea" id="description" name="description" value="" class="form-control">
+      </div>
+      <div class="location-images">
+        <form action="#" id="location-images" class="dropzone">
+          <div style="text-align: center; color: gray;"></div>
+        </form>
+      </div>
+    <button class="btn" id="saveMarker">Save Pin</button>
+  </div>
+
+  <div id="content_sourceShow" class="showContent" style="display: none;">
+    <h1> Current Location </h1>
+    <div class="test">
+    </div>
+    <img class="location-image" src="{{locationImage}}">
+  </div>
+  <button class="btn" id="saveMarker">Save Pin</button>
+</template>

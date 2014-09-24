@@ -91,6 +91,7 @@ brng = undefined
 Bx = undefined
 By = undefined
 marker = undefined
+markeru = undefined
 
 toRad = (Value) ->
   Value * Math.PI / 180
@@ -141,6 +142,16 @@ findMiddle = () ->
         $includes: 347
   , Meteor.bindEnvironment (error, res) ->
     console.log res.data
+    Markers.insert(markerObject(-118.419078, 34.058629))
+    markeru = Markers.findOne({lng: 34.058629})
+    console.log markeru
+    Markers.update
+      _id: markeru._id
+    ,
+      yelp: true,
+      name: "test"
+      lng: -118.419078
+      lat: 34.058629
     lengthOfJson = res.data.length
     limit = lengthOfJson - 1
     for i in [0...limit]
@@ -174,7 +185,6 @@ findMiddle = () ->
           region: region
           postcode: postcode
           fax: fax
-          url: url
           yelp: yelp
 
         # Users.update

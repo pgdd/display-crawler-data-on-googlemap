@@ -10,10 +10,10 @@ iron:router
 coffeescript
 less
 mrt:font-awesome-4-less
-meteorhacks:npm
 
 
 npm-container
 http
 simison:bootstrap3-less
+meteorhacks:npm
 

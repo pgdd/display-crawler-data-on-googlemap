@@ -8,6 +8,7 @@
 
 <template name="map">
 <!--   {{> navbar }} -->
+<div>
   <div id="map-canvas">
   </div>
   <div id="panel">
@@ -26,9 +27,15 @@
     </div>
   </div>
 
+
   {{> infoWindow}}
 <!--   {{> infoWindowShow}} -->
  <!--  {{> dataTable}} -->
+  </div>
+  <div>
+  {{> dataTable}}
+  </div>
+
 </template>
 
 <template name="infoWindow">

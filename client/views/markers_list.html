@@ -3,8 +3,14 @@
     <table>
       <tr>
         <th>Name</th>
-        <th>Current Charge</th>
-        <th>Email</th>
+        <th>Lat</th>
+        <th>Lng</th>
+        <th>url</th>
+        <th>_id</th>
+        <th>tel</th>
+        <th>region</th>
+        <th>Yelp ?</th>
+        <th>factual_id</th>
       </tr>
         {{#each markers}}
           <tr>
@@ -16,6 +22,9 @@
             <td>{{url}}</td>
             <td>{{_id}}</td>
             <td>{{tel}}</td>
+            <td>{{region}}</td>
+            <td>{{yelp}}</td>
+            <td>{{factual_id}}</td>
           </tr>
           {{/each}}
     </table>

@@ -33,8 +33,9 @@ fax = undefined
 
 Template.map.rendered = ->
   google.maps.event.addDomListener(window, 'load', initializeMap);
-  geolocation()
+  # geolocation()
   initializeMap()
+  determine(-73.9676818, 40.7684365)
 
 initializeMap = ->
   geocoder = new google.maps.Geocoder()
@@ -103,7 +104,7 @@ mapClick = ->
       $("#saveMarker").click ->
         description = $("#content #description").val()
         Markers.insert(markerObject(latData, lngData, description, imageId, formatedAddress))
-
+    # determine(40.766859, -73.967607)
 markerObject = (latData, lngData, description, imageId, formatedAddress) ->
   {lat: latData, lng: lngData, description: description, imageId: imageId, address: formatedAddress}
 
@@ -248,10 +249,135 @@ geocoding = ->
       e.preventDefault()
       false
 geocoding()
+determine = (lat, lng) ->
+  adressLatLng(lat, lng)
+  for i in [0..1]
+    setTimeout (->
+      adressLatLng(lat, lng + 5)
+      return
+    ), 1000
+adressLatLng = (lat, lng) ->
+  latlng = new google.maps.LatLng(lat, lng)
+  geocoder.geocode
+    latLng: latlng
+  , (results, status) ->
+    if status is google.maps.GeocoderStatus.OK
+      if results[1]
+        map.setZoom 11
+        marker = new google.maps.Marker(
+          position: latlng
+          map: map
+        )
+        infowindow.setContent results[1].formatted_address
+        formatedAddress = results[1].formatted_address
+        console.log formatedAddress
+        infowindow.open map, marker
+    else
+      alert "Geocoder failed due to: " + status
+    return
 
-Template.dataTable.rendered = ->
-  $("#example").dataTable
-    sDom: "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>"
-    sPaginationType: "bootstrap"
-    oLanguage:
-      sLengthMenu: "_MENU_ records per page"
+  return
+# Meteor.subscribe('bounds')
+# lat0 = 40.76679992935825
+# lon0 = -73.96784278317864
+# lat1 = 40.76883133248217
+# lon1 = -73.96447392865593
+# arrayOfObj = undefined
+# val = undefined
+# squareNw = () ->
+#   eastToWest = () ->
+#     arrayOfObj = [{
+#       marker0: [lat0, lon0]
+#       marker1: [lat1, lon1]
+#     }]
+#     console.log arrayOfObj
+#     for key, object of arrayOfObj
+#       console.log key
+#       console.log latN0
+#       if val is undefined
+#         console.log val = object.marker0[0] - object.marker1[0]
+#         console.log latN0 = object.marker0[0] + (object.marker0[0] - object.marker1[0])
+#         console.log latN1 = latN0 + val
+#         if latN0 <= 0 and latN1 <= 0
+#           saveBound(latN0, latN1)
+#         else
+#           console.log latN0 = object.marker0[0] + val
+#           console.log latN1 = latN0 + val
+#           saveBound(latN0, latN1)
+
+#   # ...
+
+#               # console.log key
+#       # console.log object.marker0
+#       # console.log object.marker0[0]
+#       # console.log object.marker0[1]
+#       # console.log object.marker1[0]
+#       # console.log object.marker1[1]
+#   eastToWest()
+
+
+
+
+# saveBound = (latN0, latN1) ->
+#   marker0 = [latN0, lonN0]
+#   marker1 = [latN1, lonN0]
+#   Bounds.insert {
+#     marker0: marker0
+#     marker1: marker1
+#   }
+
+# squareNw()
+
+
+
+
+
+
+
+
+# val = 0.00020314031239223596
+# latN0 = undefined
+# lonN0 = undefined
+# latN1 = undefined
+# lonN1 = undefined
+# lat0 = 0
+# lon0 = 0
+# lat1 = val
+# lon1 = val
+# @arrayOfObj = []
+# last = undefined
+# arrayOfObj.push {
+#   marker0: [lat0, lon0]
+#   marker1: [lat1, lon1]
+# }
+# # val = undefined
+# isOdd = (num) ->
+#   num % 2
+# squareNw = () ->
+#   console.log 'squareNw'
+#   eastToWest = () ->
+#     console.log 'eastToWest'
+#     last = arrayOfObj[-1..]
+#     console.log last
+#     for key, object of last
+#       if isOdd(key + 1)
+#         console.log 'is od plus'
+#         console.log lonN0 = object.marker0[1] + val
+#         console.log latN0 = 0
+#         if lonN0 >= 180
+#           console.log 'inf to 180'
+#           saveBound(latN0, latN1, latN1, lonN1, "db")
+#           saveBound(latN0, latN1, latN1, lonN1, "ar")
+#           console.log arrayOfObj
+#           eastToWest()
+#       else
+#         console.log 'even number'
+#         lonN0 = object.marker0[1] + val
+#         latN0 = object.marker0[0] + val
+#         if lonN0 >= 180
+#           console.log 'inf to 180 in even'
+#           saveBound(latN0, lonN0, latN1, lonN1, "db")
+#           saveBound(latN0, lonN0, latN1, lonN1, "ar")
+#           console.log arrayOfObj
+#           eastToWest()
+#   eastToWest()

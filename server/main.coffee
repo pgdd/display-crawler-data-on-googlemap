@@ -5,12 +5,19 @@ lonN = -73.99020552635193
 latN = 40.74052953220297
 lonNn = -73.99188995361328
 latNn = 40.73951340594177
-boundlnglat = lonN + "," + latN + "," + lonNn + "," + latNn
-urlTo =  "http://www.yelp.com/search?find_desc=&find_loc=shopping&l=g:" + boundlnglat
-uuuRl = encodeURI urlTo
-
-
-crawl = (lonN, latN, lonNn, latNn, uuuRl) ->
+uuuRl = undefined
+urlMaker = (lonN, latN, lonNn, latNn) ->
+  boundlnglat = lonN + "," + latN + "," + lonNn + "," + latNn
+  urlTo =  "http://www.yelp.com/search?find_desc=&find_loc=shopping&l=g:" + boundlnglat
+  return uuuRl = encodeURI urlTo
+crawler = () ->
+  array = Bounds.find().fetch()
+  for key, object of array
+    console.log object.marker0[0] + "it goes here"
+    urLoop = urlMaker(object.marker0[1], object.marker0[0], object.marker1[1], object.marker1[0])
+    console.log urLoop
+    crawl(object.marker0[1], object.marker0[0], object.marker1[1], object.marker1[0], uuuRl)
+crawl = (lonN, latN, lonNn, latNn, urlTo) ->
   cleanS = undefined
   scrap = [{}]
   markers = [{}]
@@ -209,7 +216,7 @@ crawl = (lonN, latN, lonNn, latNn, uuuRl) ->
 
 
   findMiddle()
-crawl()
+# crawl()
 
 # Meteor.publish "bounds", ->
 #   Bounds.find({})
@@ -255,7 +262,7 @@ squareNw = () ->
         eastToWest()
       else
         console.log 'even number'
-        latN0 = 0
+        latN0 = 0.000000000000001
         lonN0 = object.marker0[1] + val
         console.log latN0 = object.marker0[0]
         latN1 = object.marker0[0] - val
@@ -299,3 +306,4 @@ saveBound = (latN0, lonN0, latN1, lonN1, type) ->
     }
 
 # squareNw()
+crawler()

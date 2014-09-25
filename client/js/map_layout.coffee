@@ -1,4 +1,5 @@
 Meteor.subscribe('markers')
+Meteor.subscribe('bounds')
 clickMarkerIcon = '/images/blueMarker-01.png'
 currentFindMarker = undefined
 currentPosMarker = undefined
@@ -108,10 +109,29 @@ mapClick = ->
 markerObject = (latData, lngData, description, imageId, formatedAddress) ->
   {lat: latData, lng: lngData, description: description, imageId: imageId, address: formatedAddress}
 
+
+autoShowBounds = () ->
+   if (Meteor.isClient)
+    Deps.autorun () ->
+      array = Bounds.find().fetch()
+      for key, object of array
+        console.log key
+        rectangle = new google.maps.Rectangle(
+            strokeColor: "#FF0000"
+            strokeOpacity: 0.8
+            strokeWeight: 2
+            fillColor: "#FF0000"
+            fillOpacity: 0.35
+            map: map
+            bounds: new google.maps.LatLngBounds(new google.maps.LatLng(object.marker0[0], object.marker0[1]), new google.maps.LatLng(object.marker1[0],object.marker1[1]))
+          )
+
+autoShowBounds()
+
 autoLoadSavedMarkers = ->
   if (Meteor.isClient)
     Deps.autorun () ->
-      array = Markers.find(yelp: true).fetch()
+      array = Markers.find().fetch()
       for key, object of array
         console.log key
         latt = object.lat
@@ -275,109 +295,4 @@ adressLatLng = (lat, lng) ->
     else
       alert "Geocoder failed due to: " + status
     return
-
   return
-# Meteor.subscribe('bounds')
-# lat0 = 40.76679992935825
-# lon0 = -73.96784278317864
-# lat1 = 40.76883133248217
-# lon1 = -73.96447392865593
-# arrayOfObj = undefined
-# val = undefined
-# squareNw = () ->
-#   eastToWest = () ->
-#     arrayOfObj = [{
-#       marker0: [lat0, lon0]
-#       marker1: [lat1, lon1]
-#     }]
-#     console.log arrayOfObj
-#     for key, object of arrayOfObj
-#       console.log key
-#       console.log latN0
-#       if val is undefined
-#         console.log val = object.marker0[0] - object.marker1[0]
-#         console.log latN0 = object.marker0[0] + (object.marker0[0] - object.marker1[0])
-#         console.log latN1 = latN0 + val
-#         if latN0 <= 0 and latN1 <= 0
-#           saveBound(latN0, latN1)
-#         else
-#           console.log latN0 = object.marker0[0] + val
-#           console.log latN1 = latN0 + val
-#           saveBound(latN0, latN1)
-
-#   # ...
-
-#               # console.log key
-#       # console.log object.marker0
-#       # console.log object.marker0[0]
-#       # console.log object.marker0[1]
-#       # console.log object.marker1[0]
-#       # console.log object.marker1[1]
-#   eastToWest()
-
-
-
-
-# saveBound = (latN0, latN1) ->
-#   marker0 = [latN0, lonN0]
-#   marker1 = [latN1, lonN0]
-#   Bounds.insert {
-#     marker0: marker0
-#     marker1: marker1
-#   }
-
-# squareNw()
-
-
-
-
-
-
-
-
-# val = 0.00020314031239223596
-# latN0 = undefined
-# lonN0 = undefined
-# latN1 = undefined
-# lonN1 = undefined
-# lat0 = 0
-# lon0 = 0
-# lat1 = val
-# lon1 = val
-# @arrayOfObj = []
-# last = undefined
-# arrayOfObj.push {
-#   marker0: [lat0, lon0]
-#   marker1: [lat1, lon1]
-# }
-# # val = undefined
-# isOdd = (num) ->
-#   num % 2
-# squareNw = () ->
-#   console.log 'squareNw'
-#   eastToWest = () ->
-#     console.log 'eastToWest'
-#     last = arrayOfObj[-1..]
-#     console.log last
-#     for key, object of last
-#       if isOdd(key + 1)
-#         console.log 'is od plus'
-#         console.log lonN0 = object.marker0[1] + val
-#         console.log latN0 = 0
-#         if lonN0 >= 180
-#           console.log 'inf to 180'
-#           saveBound(latN0, latN1, latN1, lonN1, "db")
-#           saveBound(latN0, latN1, latN1, lonN1, "ar")
-#           console.log arrayOfObj
-#           eastToWest()
-#       else
-#         console.log 'even number'
-#         lonN0 = object.marker0[1] + val
-#         latN0 = object.marker0[0] + val
-#         if lonN0 >= 180
-#           console.log 'inf to 180 in even'
-#           saveBound(latN0, lonN0, latN1, lonN1, "db")
-#           saveBound(latN0, lonN0, latN1, lonN1, "ar")
-#           console.log arrayOfObj
-#           eastToWest()
-#   eastToWest()

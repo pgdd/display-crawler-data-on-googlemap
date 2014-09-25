@@ -1,10 +1,7 @@
-# cheerio = Meteor.npmRequire 'cheerio'
-# Meteor.publish "markers", ->
-#   Markers.find({})
-lonN = -73.99020552635193
-latN = 40.74052953220297
-lonNn = -73.99188995361328
-latNn = 40.73951340594177
+lonN = -73.99188995361328
+latN = 40.73951340594177
+lonNn = -73.99020552635193
+latNn = 40.74052953220297
 uuuRl = undefined
 urlMaker = (lonN, latN, lonNn, latNn) ->
   boundlnglat = lonN + "," + latN + "," + lonNn + "," + latNn
@@ -41,15 +38,7 @@ crawl = (lonN, latN, lonNn, latNn, urlTo) ->
     while i <= 0
       cleanS = txt.split(chr[i]).join("")
       i++
-    # console.log cleanS
-    # "http://www.yelp.com/search?find_desc=shopping&ns=1#find_loc=10159&
-  # url1 = "http://www.yelp.com/search?find_desc=shopping&ns=1#find_loc=Paris"
-  # url1 = "http://www.yelp.com/search?find_desc=shopping&ns=1#find_loc=New+York,+NY+10159&l=g:-73.99020552635193,40.74052953220297,-73.99188995361328,40.73951340594177"
-  # ur = http://www.yelp.com/search?find_desc=shopping&ns=1#find_loc=New+York,+NY+10159&l=g:-73.99020552635193,40.74052953220297,-73.99188995361328,40.73951340594177
   $ = Meteor.http.get uuuRl
-  # $ = HTTP.get "http://www.yelp.com/search?find_desc=&find_loc=New+York+City%2C+NY%2C+USA&ns=22&ls=cf0b18d10d416e2c#cflt=shopping&l=g:-74.0052205324173,40.71461387762443,-74.00858938694,40.71258081801618"
-  # $ = HTTP.get "http://www.yelp.com/search?find_desc=&find_loc=New+York+City%2C+NY%2C+USA&ns=1&ls=cf0b18d10d416e2c#cflt=shopping&l=g:-74.0052205324173,40.71461387762443,-74.00858938694,40.71258081801618"
-  # $ = HTTP.get "http://www.yelp.com/search?find_desc=&find_loc=New+York+City%2C+NY%2C+USA&ns=1#cflt=shopping&l=g:-73.98993194103241,40.72597751524788,-73.99161636829376,40.72496116672323"
   console.log $
   b = JSON.stringify($);
   # console.log b
@@ -68,16 +57,12 @@ crawl = (lonN, latN, lonNn, latNn, urlTo) ->
   console.log scrap
   a = scrap.markers
   console.log a
-  # console.log a
-  # console.log typeof a
   length = (Object.keys(a).length)
-  # console.log latData = a[1].location.latitude
-  # Get the real number of Pages avaialbe
+
   console.log indexForThatStringInit = b.indexOf('Page 1 of') + 9
   console.log indexForThatStringEnd  = indexForThatStringInit + 5
   console.log thatString = b.substring(indexForThatStringInit, indexForThatStringEnd)
   console.log numberOfPagesAvailable = parseInt(thatString)
-  # console.log real = b.charAt(indexForThat + 1)
   for i in [1...length]
     latData = a[i].location.latitude
     lngData = a[i].location.longitude
@@ -131,12 +116,6 @@ crawl = (lonN, latN, lonNn, latNn, urlTo) ->
     console.log lat3 = lat1 + (lat2 - lat1)/2
     console.log lon3 = lon2 + (lon1 - lon2)/2
     aaa = "this is middle"
-    # bbb = "secondttt"
-    # fff = "firstt"
-    # Markers.insert(markerObject(lat1, lon1, fff))
-    # Markers.insert(markerObject(lat2, lon2, bbb))
-    # yelp = false
-    # Markers.insert(markerObject(lat3, lon3, name, tel, factual_id, region, postcode, fax, aaa, yelp))
 
     # get data from Factual
     keyFactual = 'Y1irlCd3KfTm113yFd3GVlDzkGvtbzU5nqNteLqZ'
@@ -146,7 +125,6 @@ crawl = (lonN, latN, lonNn, latNn, urlTo) ->
     console.log newtest
     urlFac = "http://api.v3.factual.com/t/restaurants-us?geo=" + newtest + "&KEY=#{keyFactual}"
     console.log urlFac
-    # A = Meteor.http.get(urlFac)
     # console.log A
     Factual = undefined
     factual = undefined
@@ -204,32 +182,18 @@ crawl = (lonN, latN, lonNn, latNn, urlTo) ->
             fax: fax
             yelp: yelp
 
-          # Users.update
-          #   _id: "123"
-          # ,
-          #   name: "Alice"
-          #   friends: ["Bob"]
-
-          # Users.update {_id: marker._id}, {lat: latData, lng: lngData, name: name, tel: tel, factual_id: factual_id, region: region, postcode: postcode, fax: fax, url: url, yelp: yelp}})
-
-          # Mongo.Collection#update (marker, yelp: true}), {$set: {lat: latData, lng: lngData, name: name, tel: tel, factual_id: factual_id, region: region, postcode: postcode, fax: fax, url: url, yelp: yelp}})
-
-
   findMiddle()
-# crawl()
 
-# Meteor.publish "bounds", ->
-#   Bounds.find({})
-# Meteor.subscribe('bounds')
-val = 0.00020314031239223596
 @latN0 = undefined
 @lonN0 = undefined
 @latN1 = undefined
 @lonN1 = undefined
-lat0 = 0
-lon0 = 0
-lat1 = val
-lon1 = val
+lat0 = latN
+lon0 = lonN
+lat1 = latNn
+lon1 = lonNn
+val = 0 - (lon1 - lon0)
+valY = undefined
 @arrayOfObj = []
 last = undefined
 arrayOfObj.push {
@@ -247,44 +211,42 @@ squareNw = () ->
     last = arrayOfObj[-1..]
     console.log last
     for key, object of last
+      val = 0 - (object.marker1[1] - object.marker0[1])
       console.log 'after for'
-      if isOdd(key + 1) isnt true
-        console.log 'is od plus'
-        console.log lonN0 = object.marker0[1] + val
-        console.log latN0 = object.marker0[0]
-        latN1 = object.marker1[0] + val
-        lonN1 = object.marker1[1] + val
-        # if lonN0 >= 180 is true
-        console.log 'inf to 180'
-        saveBound(latN0, lonN0, latN1, lonN1, "db")
-        saveBound(latN0, lonN0, latN1, lonN1, "ar")
-        console.log arrayOfObj
-        eastToWest()
-      else
-        console.log 'even number'
-        latN0 = 0.000000000000001
-        lonN0 = object.marker0[1] + val
-        console.log latN0 = object.marker0[0]
-        latN1 = object.marker0[0] - val
-        lonN1 = object.marker1[1] + val
-        # if lonN0 >= 180 is true
-        console.log 'after if'
-        console.log 'inf to 180 in even'
-        saveBound(latN0, lonN0, latN1, lonN1, "db")
-        saveBound(latN0, lonN0, latN1, lonN1, "ar")
-        console.log arrayOfObj
-        eastToWest()
+      console.log 'is od plus'
+      console.log lonN0 = object.marker0[1] + val
+      console.log latN0 = object.marker0[0]
+      X0 = 0 - ( object.marker0[0] + val )
+      Y0 = object.marker0[1]
+      X1 = 0 - ( object.marker1[0] + val )
+      Y1 = object.marker1[1]
+      saveBound(X0, Y0, X1, Y1, "db")
+      saveBound(X0, Y0, X1, Y1, "ar")
+      eastToWest()
+
+      #   latN1 = object.marker1[0] + val
+      #   lonN1 = object.marker1[1] + val
+      #   # if lonN0 >= 180 is true
+      #   console.log 'inf to 180'
+      #   saveBound(latN0, lonN0, latN1, lonN1, "db")
+      #   saveBound(latN0, lonN0, latN1, lonN1, "ar")
+      #   console.log arrayOfObj
+      #   eastToWest()
+      # else
+      #   console.log 'even number'
+      #   # latN0 = 0.000000000000001
+      #   lonN0 = object.marker0[1] + val
+      #   console.log latN0 = object.marker0[0]
+      #   latN1 = object.marker0[0] - val
+      #   lonN1 = object.marker1[1] + val
+      #   # if lonN0 >= 180 is true
+      #   console.log 'after if'
+      #   console.log 'inf to 180 in even'
+      #   saveBound(latN0, lonN0, latN1, lonN1, "db")
+      #   saveBound(latN0, lonN0, latN1, lonN1, "ar")
+      #   console.log arrayOfObj
+      #   eastToWest()
   eastToWest()
-
-  # ..
-
-              # console.log key
-      # console.log object.marker0
-      # console.log object.marker0[0]
-      # console.log object.marker0[1]
-      # console.log object.marker1[0]
-      # console.log object.marker1[1]
-
 
 saveBound = (latN0, lonN0, latN1, lonN1, type) ->
   console.log 'saveBound'

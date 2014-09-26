@@ -68,6 +68,7 @@ infoWindowContent = (infoWindow, contentString) ->
 
 mapClick = ->
   google.maps.event.addListener map, "click", (event) ->
+    console.log view = map.getBounds().getSouthWest().lng()
     latt = event.latLng.lat()
     long = event.latLng.lng()
     latlng = new google.maps.LatLng(latt, long)
@@ -125,9 +126,7 @@ autoShowBounds = () ->
             map: map
             bounds: new google.maps.LatLngBounds(new google.maps.LatLng(object.marker0[0], object.marker0[1]), new google.maps.LatLng(object.marker1[0],object.marker1[1]))
           )
-
-autoShowBounds()
-
+# autoShowBounds()
 autoLoadSavedMarkers = ->
   if (Meteor.isClient)
     Deps.autorun () ->
@@ -296,3 +295,16 @@ adressLatLng = (lat, lng) ->
       alert "Geocoder failed due to: " + status
     return
   return
+
+  # var bounds = new google.maps.LatLngBounds(
+  #     new google.maps.LatLng(44.490, -78.649),
+  #     new google.maps.LatLng(44.599, -78.443)
+  # );
+
+  # // Define a rectangle and set its editable property to true.
+  # var rectangle = new google.maps.Rectangle({
+  #   bounds: bounds,
+  #   editable: true
+  # });
+
+  # rectangle.setMap(map);

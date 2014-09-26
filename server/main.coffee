@@ -1,19 +1,19 @@
-lonN = -73.99188995361328
-latN = 40.73951340594177
-lonNn = -73.99020552635193
-latNn = 40.74052953220297
 uuuRl = undefined
-urlMaker = (lonN, latN, lonNn, latNn) ->
-  boundlnglat = lonN + "," + latN + "," + lonNn + "," + latNn
+lonN = - 73.99735629558563
+latN = 40.71320735837452
+lonNn = - 73.99904072284698
+latNn = 40.712190814856044
+urlMaker = (lonNn, latNn, lonN, latN) ->
+  boundlnglat = lonNn + "," + latNn + "," + lonN + "," + latN
   urlTo =  "http://www.yelp.com/search?find_desc=&find_loc=shopping&l=g:" + boundlnglat
   return uuuRl = encodeURI urlTo
 crawler = () ->
   array = Bounds.find().fetch()
   for key, object of array
-    console.log object.marker0[0] + "it goes here"
-    urLoop = urlMaker(object.marker0[1], object.marker0[0], object.marker1[1], object.marker1[0])
-    console.log urLoop
-    crawl(object.marker0[1], object.marker0[0], object.marker1[1], object.marker1[0], uuuRl)
+    # console.log object.marker0[0] + "it goes here"
+    # urLoop = urlMaker(object.marker0[0], object.marker0[1], object.marker1[1], object.marker1[0])
+    # console.log urLoop
+    crawl(object.marker0[1], object.marker0[0], object.marker1[1], object.marker1[0], object.url)
 crawl = (lonN, latN, lonNn, latNn, urlTo) ->
   cleanS = undefined
   scrap = [{}]
@@ -192,14 +192,17 @@ lat0 = latN
 lon0 = lonN
 lat1 = latNn
 lon1 = lonNn
-val = 0 - (lon1 - lon0)
+# val = 0 - (lon1 - lon0)
 valY = undefined
 @arrayOfObj = []
 last = undefined
+url1 = urlMaker(lon1, lat1, lon0, lat0)
 arrayOfObj.push {
-  marker0: [lat0, lon0]
-  marker1: [lat1, lon1]
+  marker0: [lon0, lat0]
+  marker1: [lon1, lat1]
+  URL: url1
 }
+urlE = undefined
 # val = undefined
 isOdd = (num) ->
  console.log num % 2
@@ -211,61 +214,95 @@ squareNw = () ->
     last = arrayOfObj[-1..]
     console.log last
     for key, object of last
-      val = 0 - (object.marker1[1] - object.marker0[1])
+      val = 0.01
       console.log 'after for'
-      console.log 'is od plus'
-      console.log lonN0 = object.marker0[1] + val
-      console.log latN0 = object.marker0[0]
-      X0 = 0 - ( object.marker0[0] + val )
-      Y0 = object.marker0[1]
-      X1 = 0 - ( object.marker1[0] + val )
+      console.log 'x0' + X0 = object.marker0[0] + val
+      console.log 'y0' + Y0 = object.marker0[1]
+      X1 = object.marker1[0] + val
       Y1 = object.marker1[1]
-      saveBound(X0, Y0, X1, Y1, "db")
-      saveBound(X0, Y0, X1, Y1, "ar")
+      urlE = urlMaker(X1, Y1, X0, Y0)
+      saveBound(Y0, X0, Y1, X1, urlE, "db")
+      saveBound(X0, Y0, X1, Y1, urlE, "ar")
       eastToWest()
 
-      #   latN1 = object.marker1[0] + val
-      #   lonN1 = object.marker1[1] + val
-      #   # if lonN0 >= 180 is true
-      #   console.log 'inf to 180'
-      #   saveBound(latN0, lonN0, latN1, lonN1, "db")
-      #   saveBound(latN0, lonN0, latN1, lonN1, "ar")
-      #   console.log arrayOfObj
-      #   eastToWest()
-      # else
-      #   console.log 'even number'
-      #   # latN0 = 0.000000000000001
-      #   lonN0 = object.marker0[1] + val
-      #   console.log latN0 = object.marker0[0]
-      #   latN1 = object.marker0[0] - val
-      #   lonN1 = object.marker1[1] + val
-      #   # if lonN0 >= 180 is true
-      #   console.log 'after if'
-      #   console.log 'inf to 180 in even'
-      #   saveBound(latN0, lonN0, latN1, lonN1, "db")
-      #   saveBound(latN0, lonN0, latN1, lonN1, "ar")
-      #   console.log arrayOfObj
-      #   eastToWest()
   eastToWest()
 
-saveBound = (latN0, lonN0, latN1, lonN1, type) ->
+saveBound = (lonN0, latN0, lonN1, latN1, url, type) ->
   console.log 'saveBound'
   if type = "db"
-    marker0 = [latN0, lonN0]
-    marker1 = [latN1, lonN0]
+    marker0 = [lonN0, latN0]
+    marker1 = [lonN1, latN0]
     Bounds.insert {
       marker0: marker0
       marker1: marker1
+      url: url
     }
   if type = "ar"
     console.log latN0
     console.log lonN0
-    marker0 = [latN0, lonN0]
-    marker1 = [latN1, lonN0]
+    marker0 = [lonN0, latN0]
+    marker1 = [lonN1, latN1]
     arrayOfObj.push {
       marker0: marker0
       marker1: marker1
+      url: url
     }
 
+# functionTestUrl = (url) ->
+#   clean = (txt) ->
+#     chr = ['\\']
+#     i = 0
+#     while i <= 0
+#       return cleanS = txt.split(chr[i]).join("")
+#       i++
+#   cleanS = undefined
+#   scrap = [{}]
+#   markers = [{}]
+#   location = [{}]
+#   url = [{}]
+#   country = undefined
+#   latFactual = undefined
+#   lonFactual = undefined
+#   name = undefined
+#   tel = undefined
+#   factual_id = undefined
+#   region = undefined
+#   postcode = undefined
+#   fax = undefined
+#   array = Bounds.find().fetch()
+#   for key, object of array
+#     $ = Meteor.http.get object.url
+#     console.log $
+#     b = JSON.stringify($);
+#     # console.log b
+#     numberOfPages = b.indexOf("prev-next");
+#     data = b.substring(numberOfPages - 109, numberOfPages)
+#     # console.log data
+#     numbOf = data.charAt(0)
+#     # console.log numbOf
+#     n = b.indexOf("]}}}");
+#     m = b.indexOf("latitude")
+#     res = b.substring(m, n + 4);
+#     o = res.indexOf("zoom");
+#     console.log better = res.substring(o + 13);
+#     clean('{' + better + '}')
+#     scrap = EJSON.parse(cleanS)
+#     console.log scrap
+#     a = scrap.markers
+#     console.log a
+#     length = (Object.keys(a).length)
+#     console.log indexForThatStringInit = b.indexOf('Page 1 of') + 9
+#     console.log indexForThatStringEnd  = indexForThatStringInit + 5
+#     console.log thatString = b.substring(indexForThatStringInit, indexForThatStringEnd)
+#     console.log numberOfPagesAvailable = parseInt(thatString)
+#     for i in [1...length]
+#       latData = a[i].location.latitude
+#       lngData = a[i].location.longitude
+#       urli = a[i].url
+#       yelp = true
+#       Markers.insert(markerObject(latData, lngData, name, tel, factual_id, region, postcode, fax, urli, yelp))
+#       console.log url + " " + latData + " " + lngData
+#       console.log('end')
 # squareNw()
-crawler()
+# crawler()
+# functionTestUrl()

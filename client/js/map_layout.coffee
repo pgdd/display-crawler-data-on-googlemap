@@ -31,6 +31,12 @@ factual_id = undefined
 region = undefined
 postcode = undefined
 fax = undefined
+SWlat = undefined
+SWlng = undefined
+NElat = undefined
+NElng = undefined
+searchObject = (SWlat, SWlng, NElat, NElng) ->
+  {SW: [SWlat, SWlng], NE: [NElat, NElng]}
 
 Template.map.rendered = ->
   google.maps.event.addDomListener(window, 'load', initializeMap);
@@ -68,10 +74,14 @@ infoWindowContent = (infoWindow, contentString) ->
 
 mapClick = ->
   google.maps.event.addListener map, "click", (event) ->
-    console.log view = map.getBounds().getSouthWest().lng()
     latt = event.latLng.lat()
     long = event.latLng.lng()
     latlng = new google.maps.LatLng(latt, long)
+    SWlat = map.getBounds().getSouthWest().lng()
+    SWlng = map.getBounds().getSouthWest().lat()
+    NElat = map.getBounds().getNorthEast().lat()
+    NElng = map.getBounds().getNorthEast().lng()
+    Searchs.insert(searchObject(SWlat, SWlng, NElat, NElng))
     geocoder.geocode
       latLng: latlng
     , (results, status) ->
@@ -126,6 +136,8 @@ autoShowBounds = () ->
             map: map
             bounds: new google.maps.LatLngBounds(new google.maps.LatLng(object.marker0[0], object.marker0[1]), new google.maps.LatLng(object.marker1[0],object.marker1[1]))
           )
+
+
 # autoShowBounds()
 autoLoadSavedMarkers = ->
   if (Meteor.isClient)
@@ -296,15 +308,4 @@ adressLatLng = (lat, lng) ->
     return
   return
 
-  # var bounds = new google.maps.LatLngBounds(
-  #     new google.maps.LatLng(44.490, -78.649),
-  #     new google.maps.LatLng(44.599, -78.443)
-  # );
 
-  # // Define a rectangle and set its editable property to true.
-  # var rectangle = new google.maps.Rectangle({
-  #   bounds: bounds,
-  #   editable: true
-  # });
-
-  # rectangle.setMap(map);

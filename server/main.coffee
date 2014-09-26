@@ -196,12 +196,6 @@ lon1 = lonNn
 valY = undefined
 @arrayOfObj = []
 last = undefined
-url1 = urlMaker(lon1, lat1, lon0, lat0)
-arrayOfObj.push {
-  marker0: [lon0, lat0]
-  marker1: [lon1, lat1]
-  URL: url1
-}
 urlE = undefined
 # val = undefined
 isOdd = (num) ->
@@ -247,6 +241,83 @@ saveBound = (lonN0, latN0, lonN1, latN1, url, type) ->
       marker1: marker1
       url: url
     }
+
+
+eastToWest = (latMax, lonMax) ->
+  console.log 'eastToWest'
+  last = arrayOfObj[-1..]
+  console.log last
+  for key, object of last
+    if object.marker0[1] < lonMax
+      val = 0.01
+      console.log 'after for'
+      console.log 'x0' + X0 = object.marker0[0] + val
+      console.log 'y0' + Y0 = object.marker0[1]
+      X1 = object.marker1[0] + val
+      Y1 = object.marker1[1]
+      urlE = urlMaker(X1, Y1, X0, Y0)
+      saveBound(Y0, X0, Y1, X1, urlE, "db")
+      saveBound(Y0, X0, Y1, X1, urlE, "ar")
+      eastToWest()
+    else
+      southToNord(latMax)
+
+southToNord = (latMax) ->
+    for key, object of arrayOfObj
+      if object.marker0[0] < latMax
+        val = 0.01
+        console.log 'after for'
+        console.log 'x0' + X0 = object.marker0[0]
+        console.log 'y0' + Y0 = object.marker0[1] + val
+        X1 = object.marker1[0]
+        Y1 = object.marker1[1] + val
+        urlE = urlMaker(X1, Y1, X0, Y0)
+        saveBound(Y0, X0, Y1, X1, urlE, "db")
+        saveBound(Y0, X0, Y1, X1, urlE, "ar")
+        southToNord()
+      else
+        crawler()
+
+makeSearch = (latMax, lonMax) ->
+  return eastToWest(latMax,lonMax)
+
+initSearch = () ->
+    array = Searchs.find().fetch()
+    for key, object of array
+      val = 0.01
+      assocLat = object.SW[1] + val
+      assocLng = object.SW[0]+ val
+      url1 = urlMaker(assocLng, assocLat, object.SW[0], object.SW[1])
+      arrayOfObj.push {
+        marker0: [object.SW[0], object.SW[1]]
+        marker1: [assocLng, assocLat]
+        URL: url1
+      }
+      makeSearch(object.NE[1], object.NE[0])
+
+# initSearch()
+
+saveBound = (lonN0, latN0, lonN1, latN1, url, type) ->
+  console.log 'saveBound'
+  if type = "db"
+    marker0 = [lonN0, latN0]
+    marker1 = [lonN1, latN0]
+    Bounds.insert {
+      marker0: marker0
+      marker1: marker1
+      url: url
+    }
+  if type = "ar"
+    console.log latN0
+    console.log lonN0
+    marker0 = [lonN0, latN0]
+    marker1 = [lonN1, latN1]
+    arrayOfObj.push {
+      marker0: marker0
+      marker1: marker1
+      url: url
+    }
+
 
 # functionTestUrl = (url) ->
 #   clean = (txt) ->

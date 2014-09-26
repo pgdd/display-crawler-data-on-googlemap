@@ -7,6 +7,14 @@ body {
   width: 100%;
 }
 
+.display {
+    width:  2000px;
+    height: 500px;
+    overflow: scroll;
+    position: absolute;
+    top: 500px;
+}
+
 h1 {
   padding-left: 30px;
 }

@@ -35,6 +35,9 @@ SWlat = undefined
 SWlng = undefined
 NElat = undefined
 NElng = undefined
+Template.dataTable.rendered = ->
+  $("#example").dataTable()
+
 searchObject = (SWlat, SWlng, NElat, NElng) ->
   {SW: [SWlat, SWlng], NE: [NElat, NElng]}
 
@@ -42,11 +45,12 @@ Template.map.rendered = ->
   google.maps.event.addDomListener(window, 'load', initializeMap);
   # geolocation()
   initializeMap()
-  determine(-73.9676818, 40.7684365)
+  # determine(-73.9676818, 40.7684365)
+
+
 
 initializeMap = ->
   geocoder = new google.maps.Geocoder()
-
   mapOptions =
     backgroundColor: "#AFBE48"
     zoom: 8
@@ -280,13 +284,13 @@ geocoding = ->
       e.preventDefault()
       false
 geocoding()
-determine = (lat, lng) ->
-  adressLatLng(lat, lng)
-  for i in [0..1]
-    setTimeout (->
-      adressLatLng(lat, lng + 5)
-      return
-    ), 1000
+# determine = (lat, lng) ->
+#   adressLatLng(lat, lng)
+#   for i in [0..1]
+#     setTimeout (->
+#       adressLatLng(lat, lng + 5)
+#       return
+#     ), 1000
 adressLatLng = (lat, lng) ->
   latlng = new google.maps.LatLng(lat, lng)
   geocoder.geocode

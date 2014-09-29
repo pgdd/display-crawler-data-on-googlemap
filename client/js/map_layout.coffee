@@ -48,7 +48,6 @@ Template.map.rendered = ->
   # determine(-73.9676818, 40.7684365)
 
 
-
 initializeMap = ->
   geocoder = new google.maps.Geocoder()
   mapOptions =
@@ -72,6 +71,14 @@ initializeMap = ->
   autoLoadSavedMarkers()
   geolocation()
   mapClick()
+  autoShowBounds()
+  # bounds = new google.maps.LatLngBounds(new google.maps.LatLng(44.490, -78.649), new google.maps.LatLng(44.599, -78.443))
+  # rectangle = new google.maps.Rectangle(
+  #   bounds: bounds
+  #   editable: true
+  #   draggable: true
+  # )
+  # rectangle.setMap map
 
 infoWindowContent = (infoWindow, contentString) ->
   infoWindow.setContent(contentString)
@@ -80,12 +87,6 @@ mapClick = ->
   google.maps.event.addListener map, "click", (event) ->
     latt = event.latLng.lat()
     long = event.latLng.lng()
-    latlng = new google.maps.LatLng(latt, long)
-    SWlat = map.getBounds().getSouthWest().lng()
-    SWlng = map.getBounds().getSouthWest().lat()
-    NElat = map.getBounds().getNorthEast().lat()
-    NElng = map.getBounds().getNorthEast().lng()
-    Searchs.insert(searchObject(SWlat, SWlng, NElat, NElng))
     geocoder.geocode
       latLng: latlng
     , (results, status) ->
@@ -128,21 +129,23 @@ markerObject = (latData, lngData, description, imageId, formatedAddress) ->
 autoShowBounds = () ->
    if (Meteor.isClient)
     Deps.autorun () ->
-      array = Bounds.find().fetch()
+      array = Searchs.find().fetch()
       for key, object of array
         console.log key
         rectangle = new google.maps.Rectangle(
-            strokeColor: "#FF0000"
-            strokeOpacity: 0.8
-            strokeWeight: 2
-            fillColor: "#FF0000"
+            # strokeColor: "#FF0000"
+            # strokeOpacity: 0.8
+            # strokeWeight: 2
+            # fillColor: "#FF0000"
             fillOpacity: 0.35
             map: map
-            bounds: new google.maps.LatLngBounds(new google.maps.LatLng(object.marker0[0], object.marker0[1]), new google.maps.LatLng(object.marker1[0],object.marker1[1]))
+            editable: true
+            draggable: true
+            bounds: new google.maps.LatLngBounds(new google.maps.LatLng(object.SW[0], object.SW[1]), new google.maps.LatLng(object.NE[0],object.NE[1]))
           )
 
 
-# autoShowBounds()
+
 autoLoadSavedMarkers = ->
   if (Meteor.isClient)
     Deps.autorun () ->
@@ -246,6 +249,11 @@ geocoding = ->
           geocodingInfoWindow = new google.maps.InfoWindow(content: contentString)
           currentFindMarker.setMap null if currentFindMarker
           mapClickedMarker.setMap null if mapClickedMarker
+          SWlat = map.getBounds().getSouthWest().lng() - 0.12
+          SWlng = map.getBounds().getSouthWest().lat() - 0.12
+          NElat = map.getBounds().getNorthEast().lat() - 0.12
+          NElng = map.getBounds().getNorthEast().lng() - 0.12
+          Searchs.insert(searchObject(SWlat, SWlng, NElat, NElng))
           currentFindMarker = new google.maps.Marker(
             map: map
             draggable:true,

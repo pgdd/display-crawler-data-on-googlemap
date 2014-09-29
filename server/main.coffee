@@ -295,7 +295,7 @@ initSearch = () ->
       }
       makeSearch(object.NE[1], object.NE[0])
 
-# initSearch()
+
 
 saveBound = (lonN0, latN0, lonN1, latN1, url, type) ->
   console.log 'saveBound'
@@ -377,3 +377,25 @@ saveBound = (lonN0, latN0, lonN1, latN1, url, type) ->
 # squareNw()
 # crawler()
 # functionTestUrl()
+
+# Keep track of how many administrators are online.
+count = 0
+query = Searchs.find({})
+handle = query.observeChanges(
+  added: (id, user) ->
+    count++
+    console.log count
+    initSearch()
+    return
+
+  removed: ->
+    count--
+    console.log "Lost one. We're now down to " + count + " admins."
+    return
+)
+
+# After five seconds, stop keeping the count.
+setInterval (->
+  handle.start
+  return
+), 3000

@@ -394,7 +394,7 @@ handle = query.observeChanges(
     return
 )
 
-# After five seconds, stop keeping the count.
+
 setInterval (->
   handle.start
   return

@@ -35,6 +35,7 @@ SWlat = undefined
 SWlng = undefined
 NElat = undefined
 NElng = undefined
+currentFindRectangle = undefined
 Template.dataTable.rendered = ->
   $("#example").dataTable()
 
@@ -71,7 +72,7 @@ initializeMap = ->
   autoLoadSavedMarkers()
   geolocation()
   mapClick()
-  autoShowBounds()
+  # autoShowBounds()
   # bounds = new google.maps.LatLngBounds(new google.maps.LatLng(44.490, -78.649), new google.maps.LatLng(44.599, -78.443))
   # rectangle = new google.maps.Rectangle(
   #   bounds: bounds
@@ -245,37 +246,49 @@ geocoding = ->
       , (results, status) ->
         if status is google.maps.GeocoderStatus.OK
           map.setCenter results[0].geometry.location
+          map.setZoom(15)
           contentString = "<div id=\"content\">" + $('#content_source').html() +  "</div>"
           geocodingInfoWindow = new google.maps.InfoWindow(content: contentString)
           currentFindMarker.setMap null if currentFindMarker
           mapClickedMarker.setMap null if mapClickedMarker
-          SWlat = map.getBounds().getSouthWest().lng() - 0.12
-          SWlng = map.getBounds().getSouthWest().lat() - 0.12
-          NElat = map.getBounds().getNorthEast().lat() - 0.12
-          NElng = map.getBounds().getNorthEast().lng() - 0.12
-          Searchs.insert(searchObject(SWlat, SWlng, NElat, NElng))
-          currentFindMarker = new google.maps.Marker(
-            map: map
+          SWlat = map.getBounds().getSouthWest().lng()
+          SWlng = map.getBounds().getSouthWest().lat()
+          NElat = map.getBounds().getNorthEast().lat()
+          NElng = map.getBounds().getNorthEast().lng()
+          # Searchs.insert(searchObject(SWlat, SWlng, NElat, NElng))
+          currentFindRectangle = new google.maps.Rectangle(
             draggable:true,
             position: results[0].geometry.location,
             icon : clickMarkerIcon,
+            fillOpacity: 0.35
+            map: map
+            editable: true
+            draggable: true
+            bounds: map.getBounds()
           )
 
-          google.maps.event.addListener currentFindMarker, "click", ->
-            geocodingInfoWindow.open map, currentFindMarker
-            latt = currentFindMarker.position.lat()
-            long = currentFindMarker.position.lng()
-            latlng = new google.maps.LatLng(latt, long)
-            geocoder.geocode
-              latLng: latlng
-            , (results, status) ->
-              if status is google.maps.GeocoderStatus.OK
-               formatedAddress = results[1].formatted_address
-               console.log formatedAddress
-              else
-                alert "Geocoder failed due to: " + status
 
-              $( "div.location" ).html("<h1>#{formatedAddress}</h1>")
+          google.maps.event.addListener currentFindRectangle, "click", ->
+            console.log 'sw' + SWlat = currentFindRectangle.getBounds().getSouthWest().lng()
+            SWlng = currentFindRectangle.getBounds().getSouthWest().lat()
+            NElat = currentFindRectangle.getBounds().getNorthEast().lat()
+            NElng = currentFindRectangle.getBounds().getNorthEast().lng()
+            Searchs.insert(searchObject(SWlat, SWlng, NElat, NElng))
+
+            # geocodingInfoWindow.open map, currentFindMarker
+            # latt = currentFindMarker.position.lat()
+            # long = currentFindMarker.position.lng()
+            # latlng = new google.maps.LatLng(latt, long)
+            # geocoder.geocode
+            #   latLng: latlng
+            # , (results, status) ->
+            #   if status is google.maps.GeocoderStatus.OK
+            #    formatedAddress = results[1].formatted_address
+            #    console.log formatedAddress
+            #   else
+            #     alert "Geocoder failed due to: " + status
+
+            #   $( "div.location" ).html("<h1>#{formatedAddress}</h1>")
 
           google.maps.event.addListener geocodingInfoWindow, "domready", ->
             $("#saveMarker").click ->
@@ -319,5 +332,4 @@ adressLatLng = (lat, lng) ->
       alert "Geocoder failed due to: " + status
     return
   return
-
 

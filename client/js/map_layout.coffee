@@ -68,7 +68,6 @@ initializeMap = ->
   poly = new google.maps.Polyline(polyOptions)
   poly.setMap map
 
-
   autoLoadSavedMarkers()
   geolocation()
   mapClick()
@@ -240,6 +239,13 @@ NWlng = undefined
 NWlat = undefined
 SWlat = undefined
 SWlng = undefined
+showNewRect = (event) ->
+  google.maps.event.addListener currentFindRectangle, "click", ->
+    console.log NWlng = currentFindRectangle.getBounds().getSouthWest().lng()
+    NWlat = currentFindRectangle.getBounds().getNorthEast().lat()
+    SWlng = currentFindRectangle.getBounds().getNorthEast().lng()
+    SWlat = currentFindRectangle.getBounds().getSouthWest().lat()
+    Searchs.insert(searchObject(NWlng, NWlat, SWlng, SWlat))
 geocoding = ->
   Template.map.events
     "click button#address" : (e, t) ->
@@ -270,13 +276,13 @@ geocoding = ->
             bounds: map.getBounds()
           )
 
-
           google.maps.event.addListener currentFindRectangle, "click", ->
             console.log NWlng = currentFindRectangle.getBounds().getSouthWest().lng()
             NWlat = currentFindRectangle.getBounds().getNorthEast().lat()
             SWlng = currentFindRectangle.getBounds().getNorthEast().lng()
             SWlat = currentFindRectangle.getBounds().getSouthWest().lat()
             Searchs.insert(searchObject(NWlng, NWlat, SWlng, SWlat))
+          google.maps.event.addListener(currentFindRectangle, 'bounds_changed', showNewRect);
 
             # geocodingInfoWindow.open map, currentFindMarker
             # latt = currentFindMarker.position.lat()

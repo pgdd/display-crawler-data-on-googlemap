@@ -1,5 +1,5 @@
 uuuRl = undefined
-# val = 0 - (lon1 - lon0)
+# val = 0 - (NWlng - lon0)
 valY = undefined
 @arrayOfObj = []
 urlE = undefined
@@ -13,17 +13,13 @@ markerObject = (latData, lngData, name, tel, factual_id, region, postcode, fax, 
 
 lat0 = undefined
 lon0 = undefined
-lat1 = undefined
-lon1 = undefined
-factualCrawl = (lonN, latN, lonNn, latNn, latData, lngData) ->
+NWlat = undefined
+NWlng = undefined
+factualCrawl = (NWlng, NWlat, SElng, SElat) ->
   console.log 'factualCrawl'
     # test define center of a c
-  lat1 = latN
-  lon1 = lonN
-  lat2 = latNn
-  lon2 = lonNn
-  console.log lon2 - lon1
-  console.log lat2 - lat1
+  # console.log SElng - NWlng
+  # console.log SElat + NWlat
   lat3 = undefined
   lon3 = undefined
   dLon = undefined
@@ -43,42 +39,49 @@ factualCrawl = (lonN, latN, lonNn, latNn, latData, lngData) ->
     Value * Math.PI / 180
 
   bearing = () ->
-    y = Math.sin(dLon) * Math.cos(lat2)
-    x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon)
+    y = Math.sin(dLon) * Math.cos(SElat)
+    x = Math.cos(NWlat) * Math.sin(SElat) - Math.sin(NWlat) * Math.cos(SElat) * Math.cos(dLon)
     brng = toRad(Math.atan2(y, x))
     console.log "brng" + brng
 
   # calcul distance
   R = 6371
-  dLat = toRad(lat2 - lat1)
-  dLon = toRad(lon2 - lon1)
-  a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
+  dLat = toRad(val)
+  dLon = toRad(val)
+  a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(NWlat)) * Math.cos(toRad(SElat)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
   c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
   d = (R * c) * 1000
   console.log 'this is distance in meter' + ' ' + d
   #Create point between the two points to define the center of circle inside
-  console.log lat3 = lat1 + (lat2 - lat1)/2
-  console.log lon3 = lon2 + (lon1 - lon2)/2
+  console.log lat3 = NWlat - 0.01
+  console.log lon3 = NWlng + 0.01
   aaa = "this is middle"
 
   # get data from Factual
-  keyFactual = 'Y1irlCd3KfTm113yFd3GVlDzkGvtbzU5nqNteLqZ'
-  filterInJson = '{"$circle":{"$center":[#{lat3},#{lon3}],"$meters":#{d}}}' + '?filters={category_ids:{"$includes":123}}'
-  objectFilter = EJSON.stringify(filterInJson)
-  newtest = EJSON.parse objectFilter
-  console.log newtest
-  urlFac = "http://api.v3.factual.com/t/restaurants-us?geo=" + newtest + "&KEY=#{keyFactual}"
-  console.log urlFac
+  # keyFactual = 'Y1irlCd3KfTm113yFd3GVlDzkGvtbzU5nqNteLqZ'
+  # filterInJson = '{"$circle":{"$center":[#{lat3},#{lon3}],"$meters":#{d}}}' + '?filters={category_ids:{"$includes":123}}'
+  # objectFilter = EJSON.stringify(filterInJson)
+  # newtest = EJSON.parse objectFilter
+  # console.log newtest
+  # urlFac = "http://api.v3.factual.com/t/restaurants-us?geo=" + newtest + "&KEY=#{keyFactual}"
+  # console.log urlFac
   # console.log A
   Factual = undefined
   factual = undefined
   Factual = Meteor.npmRequire("factual-api")
   factual = new Factual("Y1irlCd3KfTm113yFd3GVlDzkGvtbzU5nqNteLqZ", "nAYWpc1AZx6TwdsmwwpxT526Oq6YqSMjiE4ERKuV")
-
   factual.get "/t/places-us",
-    filters:
-      category_ids:
-        $includes: 347
+    geo:
+      $circle:
+        $center: [
+          lat3
+          lon3
+        ]
+        $meters: d
+  # , (error, res) ->
+  #   console.log res.data
+  #   return
+
   , Meteor.bindEnvironment (error, res) ->
     console.log res.data
     # Markers.insert(markerObject(-118.419078, 34.058629))
@@ -111,13 +114,13 @@ factualCrawl = (lonN, latN, lonNn, latNn, latData, lngData) ->
       if marker is undefined
         console.log 'not this one'
       else
-        console.log 'here is marker' + marker._id + latData + lngData + name + tel + factual_id + region + postcode + fax + url + yelp
+        console.log 'here is marker' + marker._id + name + tel + factual_id + region + postcode + fax + url + yelp
         yelp = true
         Markers.update
           _id: marker._id
         ,
-          lat: latData
-          lng: lngData
+          lat: latFactual
+          lng: lonFactual
           name: name
           tel: tel
           factual_id: factual_id
@@ -136,7 +139,7 @@ lonN = undefined
 latN = undefined
 lonNn = undefined
 latNn = undefined
-yelpCrawl = (lonN, latN, lonNn, latNn, uuuRl) ->
+yelpCrawl = (NWlng, NWlat, SElng, SElat, uuuRl) ->
   console.log 'yelpCrawl'
   cleanS = undefined
   scrap = [{}]
@@ -191,7 +194,7 @@ yelpCrawl = (lonN, latN, lonNn, latNn, uuuRl) ->
     Markers.insert(markerObject(latData, lngData, name, tel, factual_id, region, postcode, fax, urli, yelp))
     console.log urli + " " + latData + " " + lngData
     console.log('end')
-    factualCrawl(lonN, latN, lonNn, latNn, latData, lngData)
+    factualCrawl(NWlng, NWlat, SElng, SElat)
 
 crawler = () ->
   console.log 'crawler'
@@ -275,19 +278,20 @@ initSearch = () ->
       url: url1
     }
     makeSearch(object.SE[0], object.SE[1])
+observeSearchs = () ->
+  count = 0
+  query = Searchs.find({})
+  handle = query.observeChanges(
+    added: (id, user) ->
+      count++
+      console.log count
+      initSearch()
+      return
 
-count = 0
-query = Searchs.find({})
-handle = query.observeChanges(
-  added: (id, user) ->
-    count++
-    console.log count
-    initSearch()
-    return
+    removed: ->
+      count--
+      console.log "Lost one. We're now down to " + count + " admins."
+      return
+  )
 
-  removed: ->
-    count--
-    console.log "Lost one. We're now down to " + count + " admins."
-    return
-)
-
+observeSearchs()

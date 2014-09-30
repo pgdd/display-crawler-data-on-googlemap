@@ -298,7 +298,7 @@ geocoding = ->
               lngData = currentFindMarker.position.lng()
               description = $("#content #description").val()
               Markers.insert(markerObject(latData, lngData, description, imageId, formatedAddress))
-
+          map.setZoom(14)
         else
           alert "Geocode was not successful for the following reason: " + status
 

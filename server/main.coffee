@@ -3,6 +3,7 @@ uuuRl = undefined
 valY = undefined
 @arrayOfObj = []
 urlE = undefined
+@val = 0.003
 # val = undefined
 isOdd = (num) ->
  console.log num % 2
@@ -125,9 +126,9 @@ factualCrawl = (lonN, latN, lonNn, latNn, latData, lngData) ->
           fax: fax
           yelp: yelp
 
-urlMaker = (lonNn, latNn, lonN, latN) ->
+urlMaker = (SElng, SElat, NWlng, NWlat) ->
   console.log 'urlMaker'
-  boundlnglat = lonNn + "," + latNn + "," + lonN + "," + latN
+  boundlnglat = SElng + "," + SElat + "," + NWlng + "," + NWlat
   urlTo =  "http://www.yelp.com/search?find_desc=&find_loc=shopping&l=g:" + boundlnglat
   return uuuRl = encodeURI urlTo
 
@@ -135,7 +136,7 @@ lonN = undefined
 latN = undefined
 lonNn = undefined
 latNn = undefined
-yelpCrawl = (lonN, latN, lonNn, latNn, urlTo) ->
+yelpCrawl = (lonN, latN, lonNn, latNn, uuuRl) ->
   console.log 'yelpCrawl'
   cleanS = undefined
   scrap = [{}]
@@ -199,102 +200,94 @@ crawler = () ->
     # console.log object.marker0[0] + "it goes here"
     # urLoop = urlMaker(object.marker0[0], object.marker0[1], object.marker1[1], object.marker1[0])
     # console.log urLoop
-    yelpCrawl(object.marker0[1], object.marker0[0], object.marker1[1], object.marker1[0], object.url)
+    yelpCrawl(object.NW[0], object.NW[1], object.SE[0], object.SE[1], object.url)
 
 @latN0 = undefined
 @lonN0 = undefined
 @latN1 = undefined
 @lonN1 = undefined
 arrayOfObj = []
-saveBound = (lonN0, latN0, lonN1, latN1, url, type) ->
+saveBound = (NWlng, NWlat, SElng, SElat, url, type) ->
   console.log 'saveBound'
   if type = "db"
-    marker0 = [lonN0, latN0]
-    marker1 = [lonN1, latN0]
     Bounds.insert {
-      marker0: marker0
-      marker1: marker1
+      NW: [NWlng, NWlat]
+      SE: [SElng, SElat]
       url: url
     }
   if type = "ar"
-    console.log latN0
-    console.log lonN0
-    marker0 = [lonN0, latN0]
-    marker1 = [lonN1, latN1]
     arrayOfObj.push {
-      marker0: marker0
-      marker1: marker1
+      NW: [NWlng, NWlat]
+      SE: [SElng, SElat]
       url: url
     }
 
-southToNord = (latMax) ->
+northToSouth = (latLim) ->
   console.log 'southToNord'
   for key, object of arrayOfObj
-    if object.marker0[0] < latMax
-      val = 0.01
+    if object.SE[1] > latLim
       console.log 'after for'
-      console.log 'x0' + X0 = object.marker0[0]
-      console.log 'y0' + Y0 = object.marker0[1] + val
-      X1 = object.marker1[0]
-      Y1 = object.marker1[1] + val
-      urlE = urlMaker(X1, Y1, X0, Y0)
-      saveBound(Y0, X0, Y1, X1, urlE, "db")
-      saveBound(Y0, X0, Y1, X1, urlE, "ar")
-      southToNord()
+      NWlng = object.NW[0]
+      NWlat = object.NW[1] - val
+      SElng = object.SE[0]
+      SElat = object.SE[1] - val
+      urlE = urlMaker(SElng, SElat, NWlng, NWlat)
+      saveBound(SElng, SElat, NWlng, NWlat, urlE, "db")
+      saveBound(SElng, SElat, NWlng, NWlat, "ar")
+      eastToWest(latLim)
+      northToSouth(latLim)
     else
       crawler()
 
 last = undefined
-eastToWest = (latMax, lonMax) ->
+eastToWest = (lonLim, latLim) ->
   console.log 'eastToWest'
   last = arrayOfObj[-1..]
   console.log last
   for key, object of last
-    if object.marker0[1] < lonMax
-      val = 0.001
+    if object.SE[0] < lonLim
       console.log 'after for'
-      console.log 'x0' + X0 = object.marker0[0] + val
-      console.log 'y0' + Y0 = object.marker0[1]
-      X1 = object.marker1[0] + val
-      Y1 = object.marker1[1]
-      urlE = urlMaker(X1, Y1, X0, Y0)
-      saveBound(Y0, X0, Y1, X1, urlE, "db")
-      saveBound(Y0, X0, Y1, X1, urlE, "ar")
-      eastToWest()
+      NWlng = object.NW[0] + val
+      NWlat = object.NW[1]
+      SElng = object.SE[0] + val
+      SElat = object.SE[1]
+      urlE = urlMaker(SElng, SElat, NWlng, NWlat)
+      saveBound(SElng, SElat, NWlng, NWlat, urlE, "db")
+      saveBound(SElng, SElat, NWlng, NWlat, urlE, "ar")
+      eastToWest(lonLim, latLim)
     else
-      southToNord(latMax)
+      northToSouth(latLim)
 
-makeSearch = (latMax, lonMax) ->
+makeSearch = (lonLim, latLim) ->
   console.log 'makeSearch'
-  return eastToWest(latMax,lonMax)
-
+  return eastToWest(lonLim, latLim)
+# array = undefined
 initSearch = () ->
   console.log 'initSearch'
   array = Searchs.find().fetch()
   for key, object of array
-    val = 0.01
-    assocLat = object.SW[1] + val
-    assocLng = object.SW[0]+ val
-    url1 = urlMaker(assocLng, assocLat, object.SW[0], object.SW[1])
+    assocLng = object.NW[0] + val
+    assocLat = object.SE[1] - val
+    url1 = urlMaker(assocLng, assocLat, object.NW[0], object.NW[1])
     arrayOfObj.push {
-      marker0: [object.SW[0], object.SW[1]]
-      marker1: [assocLng, assocLat]
-      URL: url1
+      NW: [object.NW[0], object.NW[1]]
+      SE: [assocLng, assocLat]
+      url: url1
     }
-    makeSearch(object.NE[1], object.NE[0])
+    makeSearch(object.SE[0], object.SE[1])
 
-# count = 0
-# query = Searchs.find({})
-# handle = query.observeChanges(
-#   added: (id, user) ->
-#     count++
-#     console.log count
-#     initSearch()
-#     return
+count = 0
+query = Searchs.find({})
+handle = query.observeChanges(
+  added: (id, user) ->
+    count++
+    console.log count
+    initSearch()
+    return
 
-#   removed: ->
-#     count--
-#     console.log "Lost one. We're now down to " + count + " admins."
-#     return
-# )
+  removed: ->
+    count--
+    console.log "Lost one. We're now down to " + count + " admins."
+    return
+)
 

@@ -39,8 +39,8 @@ currentFindRectangle = undefined
 Template.dataTable.rendered = ->
   $("#example").dataTable()
 
-searchObject = (SWlat, SWlng, NElat, NElng) ->
-  {SW: [SWlat, SWlng], NE: [NElat, NElng]}
+searchObject = (NWlng, NWlat, SElng, SElat) ->
+  {NW: [NWlng, NWlat], SE: [SElng, SElat]}
 
 Template.map.rendered = ->
   google.maps.event.addDomListener(window, 'load', initializeMap);
@@ -236,7 +236,10 @@ handleNoGeolocation = (errorFlag) ->
 
   map.setCenter options.position
   addMarker(position, map)
-
+NWlng = undefined
+NWlat = undefined
+SWlat = undefined
+SWlng = undefined
 geocoding = ->
   Template.map.events
     "click button#address" : (e, t) ->
@@ -269,11 +272,11 @@ geocoding = ->
 
 
           google.maps.event.addListener currentFindRectangle, "click", ->
-            console.log 'sw' + SWlat = currentFindRectangle.getBounds().getSouthWest().lng()
-            SWlng = currentFindRectangle.getBounds().getSouthWest().lat()
-            NElat = currentFindRectangle.getBounds().getNorthEast().lat()
-            NElng = currentFindRectangle.getBounds().getNorthEast().lng()
-            Searchs.insert(searchObject(SWlat, SWlng, NElat, NElng))
+            console.log NWlng = currentFindRectangle.getBounds().getSouthWest().lng()
+            NWlat = currentFindRectangle.getBounds().getNorthEast().lat()
+            SWlng = currentFindRectangle.getBounds().getNorthEast().lng()
+            SWlat = currentFindRectangle.getBounds().getSouthWest().lat()
+            Searchs.insert(searchObject(NWlng, NWlat, SWlng, SWlat))
 
             # geocodingInfoWindow.open map, currentFindMarker
             # latt = currentFindMarker.position.lat()

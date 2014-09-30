@@ -283,18 +283,18 @@ initSearch = () ->
     }
     makeSearch(object.NE[1], object.NE[0])
 
-count = 0
-query = Searchs.find({})
-handle = query.observeChanges(
-  added: (id, user) ->
-    count++
-    console.log count
-    initSearch()
-    return
+# count = 0
+# query = Searchs.find({})
+# handle = query.observeChanges(
+#   added: (id, user) ->
+#     count++
+#     console.log count
+#     initSearch()
+#     return
 
-  removed: ->
-    count--
-    console.log "Lost one. We're now down to " + count + " admins."
-    return
-)
+#   removed: ->
+#     count--
+#     console.log "Lost one. We're now down to " + count + " admins."
+#     return
+# )
 

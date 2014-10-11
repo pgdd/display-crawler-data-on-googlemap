@@ -1,0 +1,1 @@
+{"version":3,"file":"/lib/router.coffee.js","sources":["router.coffee"],"names":[],"mappings":";AAAA,MAAM,CAAC,GAAP,CAAW;SACT,IAAC,MAAD,CAAO,KAAP,EAAc;IAAE,MAAM,GAAR;GAAd,EADS;CAAX;A","sourcesContent":["Router.map ->\n  @route \"map\", { path: '/'}"]}

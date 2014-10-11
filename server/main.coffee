@@ -1,3 +1,5 @@
+Meteor.publish('settings')
+Meteor.publish('searchs')
 uuuRl = undefined
 # val = 0 - (NWlng - lon0)
 valY = undefined
@@ -9,7 +11,7 @@ isOdd = (num) ->
  console.log num % 2
 
 markerObject = (latData, lngData, name, tel, factual_id, region, postcode, fax, url, yelp) ->
-  {lat: latData, lng: lngData, name: name, tel: tel, factual_id: factual_id, region: region, postcode: postcode, fax: fax, url: url, yelp: yelp}
+  {lat: latData, lng: lngData, name: name, tel: tel, factual_id: factual_id, region: region, postcode: postcode, fax: fax, url: url, yelp: yelp, createdAt: new Date()}
 
 lat0 = undefined
 lon0 = undefined
@@ -237,7 +239,7 @@ northToSouth = (latLim) ->
       urlE = urlMaker(SElng, SElat, NWlng, NWlat)
       saveBound(SElng, SElat, NWlng, NWlat, urlE, "db")
       saveBound(SElng, SElat, NWlng, NWlat, "ar")
-      eastToWest(latLim)
+      # eastToWest(latLim)
       northToSouth(latLim)
     else
       crawler()
@@ -261,14 +263,33 @@ eastToWest = (lonLim, latLim) ->
     else
       northToSouth(latLim)
 
-makeSearch = (lonLim, latLim) ->
-  console.log 'makeSearch'
+generateBounds = (lonLim, latLim) ->
+  console.log 'gerate bounds'
+  # console.log 'makeSearch'
   return eastToWest(lonLim, latLim)
 # array = undefined
-initSearch = () ->
-  console.log 'initSearch'
-  array = Searchs.find().fetch()
+launchCrawler = () ->
+  console.log 'define settings'
+  arrayOfSettings = Settings.find({}).fetch()
+  console.log "arrayOfSettings in launch" + arrayOfSettings
+  arrayOfInfo = []
+  arrayOfSearchsId = []
+  for key, object of arrayOfSettings
+    console.log 'loop1'
+    console.log 'this is supposed to be an array:'
+    console.log arrayObj = object.info
+    arrayOfInfo = arrayOfInfo.concat arrayObj
+    console.log "arrayOfInfo after concat in loop 1" + arrayOfInfo
+  for key, object of arrayOfInfo
+    console.log 'loop 2'
+    console.log id = object.searchsId
+    arrayOfSearchsId.push id
+    console.log "arrayOfSearchsId in loop2" + arrayOfSearchsId
+  console.log "arrayOfSearchsId after loop2" + arrayOfSearchsId
+  console.log array = Searchs.find({_id: {$in: arrayOfSearchsId}}).fetch()
   for key, object of array
+    console.log 'loop 3'
+    console.log 'generating bounds ' + '' + key
     assocLng = object.NW[0] + val
     assocLat = object.SE[1] - val
     url1 = urlMaker(assocLng, assocLat, object.NW[0], object.NW[1])
@@ -277,21 +298,24 @@ initSearch = () ->
       SE: [assocLng, assocLat]
       url: url1
     }
-    makeSearch(object.SE[0], object.SE[1])
-observeSearchs = () ->
+    generateBounds(object.SE[0], object.SE[1])
+
+observeSettings = () ->
   count = 0
-  query = Searchs.find({})
+  query = Settings.find({})
   handle = query.observeChanges(
     added: (id, user) ->
       count++
       console.log count
-      initSearch()
+      launchCrawler()
       return
 
     removed: ->
       count--
-      console.log "Lost one. We're now down to " + count + " admins."
+      console.log "Lost one. We're now down to " + count + " settings."
       return
   )
 
-observeSearchs()
+observeSettings()
+Meteor.publish('searchs')
+Meteor.publish('settings')

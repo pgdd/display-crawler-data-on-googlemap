@@ -1,40 +1,82 @@
 <template name="dataTable">
-  <div style="height:100px;overflow:auto;">
-    <table id="exemple" class="display dataTable" role ="grid" cellspacing="0" width='100%'>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Lat</th>
-        <th>Lng</th>
-        <th>url</th>
-        <th>_id</th>
-        <th>tel</th>
-        <th>region</th>
-        <th>factual_id</th>
-      </tr>
-    </thead>
-        {{#each markers}}
-        <tbody>
-          <tr>
-            <td>
-                {{name}}
-            </td>
-            <td>{{lat}}</td>
-            <td>{{lng}}</td>
-            <td>{{url}}</td>
-            <td>{{_id}}</td>
-            <td>{{tel}}</td>
-            <td>{{region}}</td>
-            <td>{{factual_id}}</td>
-          </tr>
-        </tbody>
-          {{/each}}
+  <div class="page-content">
+    <div class="page-header">
+      <div class="page-title">
+        <h3>Crawler Settings<small>List areas picked out of the map. Set crawl frequency.</small></h3>
+      </div>
+      <div class="visible-xs header-element-toggle">
+        <a class="btn btn-primary btn-icon" data-toggle="collapse" data-target="#package-header-widget">
+          <i class="icon-info"></i>
+        </a>
+      </div>
+      <div class="package-header-widget">
+        <div class="collapse" id="package-header-widget">
+          <div class="well">
+            <ul class="info-buttons">
+              <li>
+                <a href="https://localhost:3000/pick" class="external_link" target="_blank" title="GitHub Issues">
+                  <i class="icon-bug">
 
-    </table>
+                  </i>
+                    <span>+ Pick The Map +</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </div>
+
+    </div>
+    <div class="breadcrumb-line">
+      <ul class="breadcrumb">
+        <li>
+          <a href="/" title="Sort, page, and filter millions of records reactively.">
+
+              Home
+
+          </a>
+        </li>
+        <li class="active">Crawler Settings</li>
+        </ul>
+
+    </div>
+      <div class="panel panel-default">
+      <div class="panel-heading">
+        <h6 class="panel-title">
+          <i class="icon-table"></i>
+          Launch Table
+        </h6>
+
+
+        <button class="add-row" id="add-row">LAUNCH</button>
+      </div>
+      <div class="panel-body">
+        <div id="reactive-query" class="dataTable-container">
+            <div class="datatable-scroll">
+            <!-- <div id="DataTables_Table_8_processing" class="dataTables_processing" style="display: none;">Loading</div> -->
+              <table class="table display dataTable no-footer" cellspacing="0" width="100%" id="DataTables_Table_8" role="grid" aria-describedby="DataTables_Table_8_info" style="width: 100%;">
+                <thead>
+                  <tr role="row">
+                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_8" rowspan="1" colspan="1" aria-label="region: activate to sort column ascending" style="width: 96.0000028610229px;">NW long
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_8" rowspan="1" colspan="1" aria-label="postcode: activate to sort column ascending" style="width: 127.000002861023px;">Freq. Hours
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_8" rowspan="1" colspan="1" aria-label="yelp: activate to sort column ascending" style="width: 74.0000028610229px;">Freq. minutes
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_8" rowspan="1" colspan="1" aria-label="name: activate to sort column ascending" style="width: 90.0000028610229px;">Supp.
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+  </div>
+      <!-- Footer -->
   </div>
 </template>
-
-
 
 
 

@@ -1,5 +1,5 @@
 Meteor.subscribe('markers')
-Meteor.subscribe('bounds')
+# Meteor.subscribe('bounds')
 Meteor.subscribe('views')
 clickMarkerIcon = '/images/blueMarker-01.png'
 currentFindMarker = undefined
@@ -37,8 +37,6 @@ SWlng = undefined
 NElat = undefined
 NElng = undefined
 currentFindRectangle = undefined
-Template.dataTable.rendered = ->
-  $("#example").dataTable()
 
 searchObject = (NWlng, NWlat, SElng, SElat) ->
   {NW: [NWlng, NWlat], SE: [SElng, SElat]}
@@ -69,9 +67,9 @@ initializeMap = ->
   poly = new google.maps.Polyline(polyOptions)
   poly.setMap map
 
-  autoLoadSavedMarkers()
   geolocation()
   mapClick()
+  autoLoadSavedMarkers()
   # autoShowBounds()
   # bounds = new google.maps.LatLngBounds(new google.maps.LatLng(44.490, -78.649), new google.maps.LatLng(44.599, -78.443))
   # rectangle = new google.maps.Rectangle(
@@ -152,10 +150,11 @@ autoShowBounds = () ->
 autoLoadSavedMarkers = ->
   if (Meteor.isClient)
     Deps.autorun () ->
+      console.log count
       console.log 'is this last ?'
       console.log object = Views.findOne {},
         sort:
-          date_created: -1
+          createdAt: -1
       console.log arrMarkersIds = object.markersIds
       for i in [0..arrMarkersIds.length]
         marker = Markers.findOne {_id: arrMarkersIds[i]}
@@ -391,160 +390,24 @@ adressLatLng = (lat, lng) ->
     return
   return
 
-Template.dataTable.rendered = ->
-  # debugger
-  Meteor.subscribe('searchs')
-  Meteor.subscribe('settings')
-# debugger
 
-  Deps.autorun () ->
-    if (Meteor.isClient)
-      # console.log 'clean'
-      # makelist(value)
-      newArray = []
-      console.log 'new Array before' + newArray
-      console.log 'real'
-      $( "#tbody").remove()
-      node = document.createElement("tbody")
-      document.getElementsByTagName("table")[0].appendChild node
-      tbodyAtt =  document.createAttribute("id")
-      tbodyAtt.value = "tbody"
-      document.getElementsByTagName("tbody")[0].setAttributeNode tbodyAtt
-      console.log Searchs.find({}).fetch()
-      array = Searchs.find({}).fetch()
-      for key, object of array
-        console.log object
-        newArray.push object
-      console.log 'new Array after' + newArray
-      makelist(newArray)
-      console.log 'after makelist'
-      eventsRemove()
+observeViews = () ->
+  @count = 0
+  query = Views.find({})
+  handle = query.observeChanges(
+    added: (id, user) ->
+      count++
+      console.log count
+      autoLoadSavedMarkers()
 
+      return
 
-Template.dataTable.events
-  "click button#add-row" : (e, t) ->
-    settObject = []
-    array = Searchs.find({}).fetch()
-    for key, object of array
-      console.log 'clickeeeed'
-      console.log 'insert setting ?'
-      console.log "click"
-      console.log object._id
-      # imageId = undefined
-      # latData = currentPosMarker.position.lat()
-      # lngData = currentPosMarker.position.lng()
-      hours = $("#hours-#{object._id}").val()
-      minutes = $("#minutes-#{object._id}").val()
-      searchsId = object._id
-      settObject.push settingObject(hours, minutes, searchsId)
-    console.log Settings.insert(info: settObject)
+    removed: ->
+      count--
+      console.log "Lost one. We're now down to " + count + " settings."
+      return
+  )
 
-eventsRemove = () ->
-  array = Searchs.find({}).fetch()
-  for key, object of array
-    $("#del-#{object._id}").click ->
-      console.log 'click remove'
-      $( "row-#{object._id}" ).remove()
-      console.log Searchs.remove({_id: object._id})
-
-
-makelist = (array) ->
-
-  # Establish the array which acts as a data source for the list
-  listData = array
-
-  numberOfListItems = listData.length
-  console.log 'one id' + ' ' + listData[0]._id
-  tableRef = document.getElementById("DataTables_Table_8").getElementsByTagName("tbody")[0]
-
-  # Insert a row in the table at row index 0
-  attRow = document.createAttribute("id")
-  attRow.value = "row-#{listData[0]._id}"
-  newRow = tableRef.insertRow(tableRef.rows.length)
-  newRow.setAttributeNode attRow
-
-  # Insert a cell in the row at index 0, 1, ..
-  newCell = newRow.insertCell(0)
-  newCell1 = newRow.insertCell(1)
-  newCell2 = newRow.insertCell(2)
-  newCell3 = newRow.insertCell(3)
-
-
-  newCell.innerHTML = listData[0].NW
-
-  newText1 = document.createElement("input")
-  newText2 = document.createElement("input")
-  newText3 = document.createElement("button")
-  newCell1.appendChild newText1
-  newCell2.appendChild newText2
-  newCell3.appendChild newText3
-  # att = document.createAttribute("id")
-  # att.value = "#{value[i]._id}"
-  hrs =  document.createAttribute("id")
-  hrs.value = "hours-#{listData[0]._id}"
-  # document.getElementsByTagName("input")[0].setAttributeNode att
-  document.getElementsByTagName("input")[0].setAttributeNode hrs
-  # att1 = document.createAttribute("id")
-  # att1.value = "#{value[i]._id}"
-  mins =  document.createAttribute("id")
-  mins.value = "minutes-#{listData[0]._id}"
-  # document.getElementsByTagName("input")[1].setAttributeNode att1
-  document.getElementsByTagName("input")[1].setAttributeNode mins
-
-  dell = document.createAttribute("id")
-  dell.value = "del-#{listData[0]._id}"
-  document.getElementsByTagName("button")[1].setAttributeNode dell
-  # $("row-#{listData[0]._id} > tr > button").click ->
-  #   console.log 'click remove'
-  #   $( "row-#{listData[0]._id}" ).remove()
-  #   console.log Settings.remove({_id: listData[0]._id})
-  value = listData
-  for i in [1...numberOfListItems]
-    console.log 'one by one ids' + ' ' + value[i]._id
-    tableRef = document.getElementById("DataTables_Table_8").getElementsByTagName("tbody")[0]
-
-    # Insert a row in the table at row index 0
-    attRow = document.createAttribute("id")
-    attRow.value = "row-#{value[i]._id}"
-    newRow = tableRef.insertRow(tableRef.rows.length)
-    newRow.setAttributeNode attRow
-
-    # Insert a cell in the row at index 0, 1, ..
-    newCell = newRow.insertCell(0)
-    newCell1 = newRow.insertCell(1)
-    newCell2 = newRow.insertCell(2)
-    newCell3 = newRow.insertCell(3)
-
-
-    newCell.innerHTML = value[i].NW
-
-    newText1 = document.createElement("input")
-    newText2 = document.createElement("input")
-    newText3 = document.createElement("button")
-    newCell1.appendChild newText1
-    newCell2.appendChild newText2
-    newCell3.appendChild newText3
-    # att = document.createAttribute("id")
-    # att.value = "#{value[i]._id}"
-    hrs =  document.createAttribute("id")
-    hrs.value = "hours-#{value[i]._id}"
-    # document.getElementsByTagName("input")[0].setAttributeNode att
-    document.getElementsByTagName("input")[i + i].setAttributeNode hrs
-    # att1 = document.createAttribute("id")
-    # att1.value = "#{value[i]._id}"
-    mins =  document.createAttribute("id")
-    mins.value = "minutes-#{value[i]._id}"
-    # document.getElementsByTagName("input")[1].setAttributeNode att1
-    document.getElementsByTagName("input")[1 + i + i].setAttributeNode mins
-
-    dell = document.createAttribute("id")
-    dell.value = "del-#{value[i]._id}"
-    document.getElementsByTagName("button")[i + 1].setAttributeNode dell
-    # $("row-#{value[i]._id} > tr > button").click ->
-    #   console.log 'click remove'
-    #   $( "row-#{value[i]._id}" ).remove()
-    #   console.log Settings.remove({_id: value[i]._id})
-
-
+observeViews()
 
 

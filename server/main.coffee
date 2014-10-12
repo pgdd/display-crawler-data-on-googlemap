@@ -300,14 +300,15 @@ launchCrawler = () ->
     }
     generateBounds(object.SE[0], object.SE[1])
 
-observeSettings = () ->
+observeViews = () ->
   count = 0
   query = Settings.find({})
   handle = query.observeChanges(
     added: (id, user) ->
       count++
       console.log count
-      launchCrawler()
+      # launchCrawler()
+
       return
 
     removed: ->
@@ -316,6 +317,10 @@ observeSettings = () ->
       return
   )
 
-observeSettings()
-Meteor.publish('searchs')
-Meteor.publish('settings')
+observeViews
+# Meteor.publish('searchs', ->)
+# Meteor.publish('settings')
+Meteor.publish 'views', ->
+  return Views.find()
+Meteor.publish 'markers', ->
+  return Markers.find()
